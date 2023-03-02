@@ -1,5 +1,4 @@
-// ignore_for_file: must_call_super, prefer_const_constructors
-import 'dart:io';
+// ignore_for_file: must_call_super, prefer_const_constructors, use_key_in_widget_constructors
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,11 +78,11 @@ class _FirstScreenState extends State<FirstScreen> {
       backgroundColor: Colors.grey,
       appBar: AppBar(
         title: Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 45.0),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
           child: Text(
             _greeting(),
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -122,7 +121,6 @@ class _FirstScreenState extends State<FirstScreen> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
               return Text('Error');
-              break;
             case ConnectionState.done:
               final user = FirebaseAuth.instance.currentUser;
               final emailVerfied = user?.emailVerified ?? false;
@@ -132,23 +130,26 @@ class _FirstScreenState extends State<FirstScreen> {
                 print('you need to verify your email');
               }
               return Center(
-                child: Container(
-                  height: 200,
-                  width: 300,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Image.asset(
-                          './lib/images/waiting.png',
-                          fit: BoxFit.cover,
+                child: Card(
+                  child: SizedBox(
+                    height: 200,
+                    width: 450,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Image.asset(
+                            './lib/images/welcome.jpeg',
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'Welcome to our application',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    ],
+                        Text(
+                          'Welcome to our application',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        
+                      ],
+                    ),
                   ),
                 ),
               );
