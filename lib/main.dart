@@ -2,9 +2,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:registration/models/login_view.dart';
-import 'package:registration/models/register_view.dart';
-import 'package:registration/models/verif_email.dart';
+import 'package:registration/widgets/login_view.dart';
+import 'package:registration/widgets/main_ui.dart';
+import 'package:registration/widgets/register_view.dart';
+import 'package:registration/widgets/verif_email.dart';
 import 'firebase_options.dart';
 
 void main() {
@@ -17,18 +18,6 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // ? This widget is the root of your application.
-
-  // ? Fonction de Greeting par rapport a l'heure
-  String _greeting() {
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return 'Good Morning';
-    } else if (hour <= 18) {
-      return 'Good Afternoon';
-    } else {
-      return 'Good Evening';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,22 +33,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
-            child: Text(
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              _greeting(),
-            ),
-          ),
-          shadowColor: Colors.lightBlue,
-        ),
-        body: FirstScreen(),
-      ),
+      home: FirstScreen(),
     );
   }
 }
@@ -70,38 +44,51 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> {
+  // ? Fonction de Greeting par rapport a l'heure
+  String _greeting() {
+    final hour = TimeOfDay.now().hour;
+    if (hour <= 12) {
+      return 'Good Morning';
+    } else if (hour <= 18) {
+      return 'Good Afternoon';
+    } else {
+      return 'Good Evening';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Text('Error');
-          case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
-            print(user);
-            if (user != null) {
-              if (user.emailVerified) {
-                return Text('Email Verified');
+        future: Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Text('Error');
+            case ConnectionState.done:
+              final user = FirebaseAuth.instance.currentUser;
+              print(user);
+              if (user != null) {
+                if (user.emailVerified) {
+                  return MainUi();
+                } else {
+                  return VerificationEmail();
+                }
               } else {
-                return VerificationEmail();
+                return LoginView();
               }
-            }else{
-              return LoginView();
-            }
+              return MainUi();
             /*final emailVerfied = user?.emailVerified ?? false;
               if (emailVerfied) {
                 return const Text('Done');
               } else {
                 return const VerificationEmail();
               }*/
-          default:
-            return const CircularProgressIndicator();
-        }
-      }, // This trailing comma makes auto-formatting nicer for build methods.
-    );
+            default:
+              return const CircularProgressIndicator();
+          }
+        }, // This trailing comma makes auto-formatting nicer for build methods.
+      );
   }
 }
