@@ -32,6 +32,18 @@ class _RegisterViewState extends State<RegisterView> {
     }
   }
 
+  // ? Fonction de Greeting par rapport a l'heure
+  String _greeting() {
+    final hour = TimeOfDay.now().hour;
+    if (hour <= 12) {
+      return 'Good Morning';
+    } else if (hour <= 18) {
+      return 'Good Afternoon';
+    } else {
+      return 'Good Evening';
+    }
+  }
+
   @override
   void initState() {
     // ignore: todo
@@ -54,65 +66,95 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: const [
-            Icon(Icons.person),
-            SizedBox(width: 15,),
-            Text('SignUp',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ))
-          ],
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
+          child: Text(
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            _greeting(),
+          ),
         ),
       ),
-      body: Card(
-        elevation: 4,
-        borderOnForeground: true,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: _email,
-                enableSuggestions: false, // important for the email
-                autocorrect: false, // important for the email
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.person),
-                  labelText: 'Email',
-                  hintText: 'Enter your email here',
+      body: SizedBox(
+        height: 330,
+        child: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          borderOnForeground: true,
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Sign Up',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(
+                height: 10,
               ),
-              TextField(
-                controller: _password,
-                obscureText: true, // important for the password
-                enableSuggestions: false, // important for the password
-                autocorrect: false, // important for the password
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.password),
-                  labelText: 'Password',
-                  hintText: 'Enter your password here',
+                const Icon(
+                  Icons.person,
+                  color: Colors.blue,
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                child: Column(
+                TextField(
+                  controller: _email,
+                  enableSuggestions: false, // important for the email
+                  autocorrect: false, // important for the email
+                  keyboardType: TextInputType.emailAddress,
+                  onSubmitted: (_) => _submitData(),
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: 'Enter your email here',
+                    labelText: 'Email',
+                  ),
+                ),
+                TextField(
+                  controller: _password,
+                  obscureText: true, // important for the password
+                  enableSuggestions: false, // important for the password
+                  autocorrect: false, // important for the password
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.password),
+                    hintText: 'Enter your password here',
+                    labelText: 'Password',
+                  ),
+                ),
+                Column(
                   children: [
+                    const SizedBox(
+                      height: 15,
+                    ),
                     OutlinedButton(
                       child: const Text(
-                        'SignUp',
+                        'Sign Up',
                         style: TextStyle(color: Colors.blue),
                       ),
                       onPressed: () => _submitData(),
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('You  have an account ?'),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Sign In'),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
