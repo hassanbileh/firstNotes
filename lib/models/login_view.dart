@@ -16,6 +16,17 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
+  String _greeting() {
+    final hour = TimeOfDay.now().hour;
+    if (hour <= 12) {
+      return 'Good Morning';
+    } else if (hour <= 18) {
+      return 'Good Afternoon';
+    } else {
+      return 'Good Evening';
+    }
+  }
+
   void submitData() async {
     try {
       final email = _email.text;
@@ -75,7 +86,10 @@ class _LoginViewState extends State<LoginView> {
               SizedBox(
                 height: 10,
               ),
-              const Icon(Icons.person, color: Colors.blue,),
+              const Icon(
+                Icons.person,
+                color: Colors.blue,
+              ),
               TextField(
                 controller: _email,
                 enableSuggestions: false, // important for the email

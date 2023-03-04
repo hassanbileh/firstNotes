@@ -18,31 +18,7 @@ class MyApp extends StatelessWidget {
 
   // ? This widget is the root of your application.
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sign In',
-      //? The initialRoute property defines which route the app should start with *Named Routes*
-      initialRoute: '/',
-      routes:  {
-        '/': (context) =>  FirstScreen(),
-        '/second': (context) =>  RegisterView(),
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-    );
-  }
-}
-
-class FirstScreen extends StatefulWidget {
-  @override
-  State<FirstScreen> createState() => _FirstScreenState();
-}
-
-class _FirstScreenState extends State<FirstScreen> {
-
-// ? Fonction de Greeting par rapport a l'heure
+  // ? Fonction de Greeting par rapport a l'heure
   String _greeting() {
     final hour = TimeOfDay.now().hour;
     if (hour <= 12) {
@@ -56,45 +32,76 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
-          child: Text(
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-            _greeting(),
-          ),
-        ),
-        shadowColor: Colors.lightBlue,
-        
+    return MaterialApp(
+      title: 'Sign In',
+      //? The initialRoute property defines which route the app should start with *Named Routes*
+      initialRoute: '/',
+      routes: {
+        '/first': (context) => FirstScreen(),
+        '/second': (context) => RegisterView(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
+            child: Text(
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              _greeting(),
+            ),
+          ),
+          shadowColor: Colors.lightBlue,
         ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('Error');
-            case ConnectionState.done:
-              final user = FirebaseAuth.instance.currentUser;
-              print(user);
-              /*final emailVerfied = user?.emailVerified ?? false;
+        body: FirstScreen(),
+      ),
+    );
+  }
+}
+
+class FirstScreen extends StatefulWidget {
+  @override
+  State<FirstScreen> createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text('Error');
+          case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            print(user);
+            if (user != null) {
+              if (user.emailVerified) {
+                return Text('Email Verified');
+              } else {
+                return VerificationEmail();
+              }
+            }else{
+              return LoginView();
+            }
+            /*final emailVerfied = user?.emailVerified ?? false;
               if (emailVerfied) {
                 return const Text('Done');
               } else {
                 return const VerificationEmail();
               }*/
-
-              return LoginView(); 
-            default:
-              return const CircularProgressIndicator();
-          }
-        },
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          default:
+            return const CircularProgressIndicator();
+        }
+      }, // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
