@@ -8,6 +8,7 @@ import 'package:registration/widgets/register_view.dart';
 import 'package:registration/widgets/verif_email.dart';
 import 'firebase_options.dart';
 
+
 void main() {
   // To initialise Firebase when our app start
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/first': (context) => FirstScreen(),
         '/second': (context) => RegisterView(),
+        '/login': (context) => LoginView(),
+        '/main_ui': (context) => MainUi(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -78,7 +81,6 @@ class _FirstScreenState extends State<FirstScreen> {
               } else {
                 return LoginView();
               }
-              return MainUi();
             /*final emailVerfied = user?.emailVerified ?? false;
               if (emailVerfied) {
                 return const Text('Done');

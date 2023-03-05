@@ -27,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+// ? function de login et redirection vers le mainui
   void _submitData() async {
     try {
       final email = _email.text;
@@ -34,6 +35,7 @@ class _LoginViewState extends State<LoginView> {
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       print(userCredential);
+      Navigator.of(context).pushNamedAndRemoveUntil('/main_ui', (_) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('Invalid User');
@@ -106,8 +108,8 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 TextField(
                   controller: _email,
-                  enableSuggestions: false, // important for the email
-                  autocorrect: false, // important for the email
+                  enableSuggestions: false, //? important for the email
+                  autocorrect: false, //? important for the email
                   keyboardType: TextInputType.emailAddress,
                   onSubmitted: (_) => _submitData(),
                   decoration: InputDecoration(

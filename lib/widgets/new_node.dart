@@ -21,6 +21,7 @@ class _NewNodeState extends State<NewNode> {
     if (enteredTitle.isEmpty || enteredText.isEmpty ){
       return;
     }
+    widget.addNoteHandler(enteredTitle,enteredText);
   }
   @override
   Widget build(BuildContext context) {
