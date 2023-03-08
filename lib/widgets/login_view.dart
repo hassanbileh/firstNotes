@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
-import 'register_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtools show log; //? log est une alternative a print
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,14 +16,17 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
-  String _greeting() {
+ String _greeting() {
+    const String goodMorning = 'Good Morning';
+    const String goodAfter = 'Good Afternoon';
+    const String goodEven = 'Good Evening';
     final hour = TimeOfDay.now().hour;
     if (hour <= 12) {
-      return 'Good Morning';
+      return goodMorning;
     } else if (hour <= 18) {
-      return 'Good Afternoon';
+      return goodAfter;
     } else {
-      return 'Good Evening';
+      return goodEven;
     }
   }
 
@@ -34,13 +37,13 @@ class _LoginViewState extends State<LoginView> {
       final password = _password.text;
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      print(userCredential);
-      Navigator.of(context).pushNamedAndRemoveUntil('/main_ui', (_) => false);
+      devtools.log(userCredential.toString());
+      Navigator.of(context).pop('/main_ui');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('Invalid User');
+        devtools.log('User not found');
       } else if (e.code == 'wrong-password') {
-        print('Wrong Password');
+        devtools.log('Wrong Password');
       }
     }
   }

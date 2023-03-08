@@ -1,10 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
+import 'dart:developer' as devtools show log; //? log est une alternative a print
 class NewNode extends StatefulWidget {
   final Function addNoteHandler;
-  NewNode(this.addNoteHandler);
+  const NewNode(this.addNoteHandler);
 
   @override
   State<NewNode> createState() => _NewNodeState();
@@ -22,19 +21,22 @@ class _NewNodeState extends State<NewNode> {
       return;
     }
     widget.addNoteHandler(enteredTitle,enteredText);
+
+  // Fermer automatiquement le formulaire après avoir ajouter
+    Navigator.of(context).pop();
   }
   @override
   Widget build(BuildContext context) {
     return Card(
             elevation: 5,
             child: Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
+              margin:const EdgeInsets.all(10),
               child: Column(
                 children: [
                   // Champs Titre 
                   TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: 'Add Title here',
                       labelText: 'Title Node',
@@ -43,11 +45,11 @@ class _NewNodeState extends State<NewNode> {
                     controller: titleNode,
                     onSubmitted: (_) => _submitDataNode(),
                   ),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   // Champs Amount
                   Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Add node here',
                         labelText: 'Node',
@@ -64,17 +66,17 @@ class _NewNodeState extends State<NewNode> {
 
                   // Boutton d'Ajout 
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(
                       children: [
                         OutlinedButton(
-                          child: Text(
+                          child: const Text(
                             'Add Node',
                             style: TextStyle(color: Colors.green),
                           ),
                           onPressed: () => {
-                            print(titleNode.text),
-                            print(textNode.text),
+                            devtools.log(titleNode.text),
+                            devtools.log(textNode.text),
                             _submitDataNode,
                             
                           },
@@ -85,6 +87,6 @@ class _NewNodeState extends State<NewNode> {
                 ],
               ),
             ),
-          );;
+          );
   }
 }

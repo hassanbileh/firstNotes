@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:registration/widgets/main_ui.dart';
 
 class VerificationEmail extends StatefulWidget {
   const VerificationEmail({super.key});
@@ -9,6 +10,20 @@ class VerificationEmail extends StatefulWidget {
 }
 
 class _VerificationEmailState extends State<VerificationEmail> {
+  String _greeting() {
+    const String goodMorning = 'Good Morning';
+    const String goodAfter = 'Good Afternoon';
+    const String goodEven = 'Good Evening';
+    final hour = TimeOfDay.now().hour;
+    if (hour <= 12) {
+      return goodMorning;
+    } else if (hour <= 18) {
+      return goodAfter;
+    } else {
+      return goodEven;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -23,7 +38,21 @@ class _VerificationEmailState extends State<VerificationEmail> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
+          child: Text(
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            _greeting(),
+          ),
+        ),
+        shadowColor: Colors.lightBlue,
+      ),
+      body: Container(
         margin: const EdgeInsets.all(20),
         height: 150,
         width: double.infinity,
@@ -39,16 +68,17 @@ class _VerificationEmailState extends State<VerificationEmail> {
               TextButton(
                 style: ButtonStyle(
                     mouseCursor: MaterialStateMouseCursor.clickable),
-                
                 onPressed: () async {
                   final user = FirebaseAuth.instance.currentUser;
                   await user?.sendEmailVerification();
-                  },
+                  final isUserVerified = user?.emailVerified;
+                },
                 child: Text('Send email verification'),
               ),
             ],
           ),
         ),
-      );
+      ),
+    );
   }
 }

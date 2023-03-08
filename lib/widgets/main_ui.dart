@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../models/node.dart';
+import '../models/note.dart';
 import './new_node.dart';
 import 'dart:developer' as devtools show log; //? log est une alternative a print
+import 'note_list.dart';
+ 
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
-
 
 enum MenuAction {
   addNewNode,
@@ -13,14 +14,15 @@ enum MenuAction {
 }
 
 class MainUi extends StatefulWidget {
-  const MainUi({super.key});
+  const MainUi();
 
   @override
   State<MainUi> createState() => _MainUiState();
 }
 
 class _MainUiState extends State<MainUi> {
-  List<Note> _userNodes = [];
+  //Liste des Notes
+  final List<Note> _userNotes = [];
 
   // ? Fonction de Greeting par rapport a l'heure
   String _greeting() {
@@ -50,17 +52,8 @@ class _MainUiState extends State<MainUi> {
       text: txNode,
     );
     setState(() {
-      _userNodes.add(newNd);
+      _userNotes.add(newNd);
     });
-  }
-
-  void logout() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      user.reload();
-    } else {
-      return;
-    }
   }
 
   @override
@@ -70,7 +63,7 @@ class _MainUiState extends State<MainUi> {
         title: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
           child: Text(
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -82,30 +75,37 @@ class _MainUiState extends State<MainUi> {
           //? PopupMenuButton
           //? on crée d'abord le MenuAction enum et on l'utilise dans PopMenuButton
           PopupMenuButton<MenuAction>(
-            onSelected: (value) async{
+            onSelected: (value) async {
               switch (value) {
                 case MenuAction.addNewNode:
                   return _startAddNewNode(context);
                 case MenuAction.logout:
-
                   final shouldLogout = await showAlertDialog(context);
                   devtools.log(shouldLogout.toString());
-                  if (shouldLogout){
+                  if (shouldLogout) {
+                    //? en cas de deconnexion
                     await FirebaseAuth.instance.signOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+                    setState(() {
+                      Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login', (_) => false);
+                    });
+                    
                   }
 
                   break;
                 default:
               }
             },
+
+            // Menu Action builder
             itemBuilder: (value) {
               return [
-                const PopupMenuItem<MenuAction>(
+                //? Popup du menuItem
+                 PopupMenuItem<MenuAction>(
                   value: MenuAction.addNewNode,
                   child: Text('Add Node'),
                 ),
-                const PopupMenuItem<MenuAction>(
+                 PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Log out'),
                 ),
@@ -114,7 +114,15 @@ class _MainUiState extends State<MainUi> {
           )
         ],
       ),
-      body: const Text('data'),
+      body: Column(children: [
+        
+        NoteList(_userNotes),
+      ]),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => _startAddNewNode(context),
+      ),
     );
   }
 }
@@ -132,12 +140,15 @@ Future<bool> showAlertDialog(BuildContext context) {
         ),
         content: const Text('Are you sure to logout'),
         actions: [
+          // Cancel logout
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
             child: const Text('Cancel'),
           ),
+
+          // Confirme logout
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(true);

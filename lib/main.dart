@@ -8,7 +8,6 @@ import 'package:registration/widgets/register_view.dart';
 import 'package:registration/widgets/verif_email.dart';
 import 'firebase_options.dart';
 
-
 void main() {
   // To initialise Firebase when our app start
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,49 +47,38 @@ class FirstScreen extends StatefulWidget {
 
 class _FirstScreenState extends State<FirstScreen> {
   // ? Fonction de Greeting par rapport a l'heure
-  String _greeting() {
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return 'Good Morning';
-    } else if (hour <= 18) {
-      return 'Good Afternoon';
-    } else {
-      return 'Good Evening';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Text('Error');
-            case ConnectionState.done:
-              final user = FirebaseAuth.instance.currentUser;
-              print(user);
-              if (user != null) {
-                if (user.emailVerified) {
-                  return MainUi();
-                } else {
-                  return VerificationEmail();
-                }
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
+      builder: (ctx, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text('Error');
+          case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            
+            // Verifier si le user est connecté  
+            if (user != null) {
+              if (user.emailVerified) {
+                setState(() {
+                  Navigator.of(ctx).pushNamedAndRemoveUntil('/main_ui', (_) => false);
+                });
+                
               } else {
-                return LoginView();
+               return const VerificationEmail(); 
               }
-            /*final emailVerfied = user?.emailVerified ?? false;
-              if (emailVerfied) {
-                return const Text('Done');
-              } else {
-                return const VerificationEmail();
-              }*/
-            default:
-              return const CircularProgressIndicator();
-          }
-        }, // This trailing comma makes auto-formatting nicer for build methods.
-      );
+            } else {
+              return LoginView();
+            }
+            return LoginView();
+          default:
+            return const CircularProgressIndicator();
+        }
+      }, // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 }
