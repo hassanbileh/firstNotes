@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/note.dart';
-import './new_node.dart';
-import 'dart:developer' as devtools show log; //? log est une alternative a print
-import 'note_list.dart';
- 
+import 'dart:developer' as devtools
+    show log; //? log est une alternative a print
+
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
 
@@ -37,23 +36,10 @@ class _MainUiState extends State<MainUi> {
   }
 
   void _startAddNewNode(BuildContext ctx) {
-    showModalBottomSheet(
-      context: ctx,
-      builder: (_) {
-        return NewNode(addNewNode);
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/note_content',
+      (_) => false,
     );
-  }
-
-  void addNewNode(String tlNode, String txNode) {
-    final newNd = Note(
-      title: tlNode,
-      text: txNode,
-    );
-    setState(() {
-      _userNotes.add(newNd);
-    });
   }
 
   @override
@@ -85,11 +71,10 @@ class _MainUiState extends State<MainUi> {
                   if (shouldLogout) {
                     //? en cas de deconnexion
                     await FirebaseAuth.instance.signOut();
-                    setState(() {
-                      Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login', (_) => false);
-                    });
-                    
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login',
+                      (_) => false,
+                    );
                   }
 
                   break;
@@ -101,28 +86,30 @@ class _MainUiState extends State<MainUi> {
             itemBuilder: (value) {
               return [
                 //? Popup du menuItem
-                 PopupMenuItem<MenuAction>(
+                const PopupMenuItem<MenuAction>(
                   value: MenuAction.addNewNode,
                   child: Text('Add Node'),
                 ),
-                 PopupMenuItem<MenuAction>(
+                const PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Log out'),
                 ),
               ];
             },
-          )
+          ),
         ],
       ),
-      body: Column(children: [
-        
-        NoteList(_userNotes),
+      body: Column(
+        children: const [
+        Text(
+          'Recent Notes',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ]),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => _startAddNewNode(context),
-      ),
     );
   }
 }

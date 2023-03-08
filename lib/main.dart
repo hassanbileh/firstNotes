@@ -2,10 +2,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:registration/widgets/login_view.dart';
-import 'package:registration/widgets/main_ui.dart';
-import 'package:registration/widgets/register_view.dart';
-import 'package:registration/widgets/verif_email.dart';
+import 'widgets/login_view.dart';
+import 'widgets/main_ui.dart';
+import 'widgets/register_view.dart';
+import 'widgets/verif_email.dart';
 import 'firebase_options.dart';
 
 void main() {
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/second': (context) => RegisterView(),
         '/login': (context) => LoginView(),
         '/main_ui': (context) => MainUi(),
+        '//note_content': (context) => MainUi(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -60,21 +61,17 @@ class _FirstScreenState extends State<FirstScreen> {
             return Text('Error');
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
-            
-            // Verifier si le user est connecté  
+
+            // Verifier si le user est connecté
             if (user != null) {
               if (user.emailVerified) {
-                setState(() {
-                  Navigator.of(ctx).pushNamedAndRemoveUntil('/main_ui', (_) => false);
-                });
-                
-              } else {
-               return const VerificationEmail(); 
-              }
+                  return const MainUi();
+                } else {
+                  return const VerificationEmail();
+                }
             } else {
-              return LoginView();
+              return const LoginView();
             }
-            return LoginView();
           default:
             return const CircularProgressIndicator();
         }
