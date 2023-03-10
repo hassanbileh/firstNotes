@@ -1,9 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
+import 'package:registration/constants/routes.dart';
+import '../utilities/greeting.dart';
+import '../utilities/show_error_dialog.dart'; 
 
-import 'package:registration/constants/routes.dart'; //? log est une alternative a print
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -18,19 +19,7 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
-  String _greeting() {
-    const String goodMorning = 'Good Morning';
-    const String goodAfter = 'Good Afternoon';
-    const String goodEven = 'Good Evening';
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return goodMorning;
-    } else if (hour <= 18) {
-      return goodAfter;
-    } else {
-      return goodEven;
-    }
-  }
+  
 
 // ? function de login et redirection vers le mainui
   void _submitData() async {
@@ -39,17 +28,36 @@ class _LoginViewState extends State<LoginView> {
       final password = _password.text;
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      devtools.log(userCredential.toString());
       Navigator.of(context).pushNamedAndRemoveUntil(
         notesRoute,
         (_) => false,
       );
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) { 
+      //! Catching FirebaseAuth Errors
+      
       if (e.code == 'user-not-found') {
-        devtools.log('User not found');
+        await showErrorDialog(
+          context,
+          'User not found',
+        );
       } else if (e.code == 'wrong-password') {
-        devtools.log('Wrong Password');
+        await showErrorDialog(
+          context,
+          'Wrong password',
+        );
+      } else {
+        await showErrorDialog(
+          context,
+          'Error: ${e.code}',
+        );
       }
+    } catch (e){
+
+      //! catching any other error different of FirebaseAuth
+      await showErrorDialog(
+          context,
+          e.toString(),
+        );
     }
   }
 
@@ -82,7 +90,7 @@ class _LoginViewState extends State<LoginView> {
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
-            _greeting(),
+            greeting(),
           ),
         ),
         shadowColor: Colors.lightBlue,
@@ -174,3 +182,5 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
+

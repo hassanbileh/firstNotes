@@ -6,6 +6,7 @@ import 'package:registration/constants/routes.dart';
 import 'package:registration/widgets/verif_email.dart';
 import 'dart:developer' as devtools show log;
 
+import '../utilities/greeting.dart';
 import 'main_ui.dart';
 
 class RegisterView extends StatefulWidget {
@@ -44,23 +45,10 @@ class _RegisterViewState extends State<RegisterView> {
         devtools.log('Weak Password');
       } else if (e.code == 'email-already-in-use') {
         devtools.log('Email already in use');
+      }else if (e.code == 'invalid-email') {
+        devtools.log('Invalid Email');
       }
       Navigator.of(context).pop();
-    }
-  }
-
-  // ? Fonction de Greeting par rapport a l'heure
-  String _greeting() {
-    final String goodMorning = 'Good Morning';
-    final String goodAfter = 'Good Afternoon';
-    final String goodEven = 'Good Evening';
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return goodMorning;
-    } else if (hour <= 18) {
-      return goodAfter;
-    } else {
-      return goodEven;
     }
   }
 
@@ -93,7 +81,7 @@ class _RegisterViewState extends State<RegisterView> {
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
-            _greeting(),
+            greeting(),
           ),
         ),
         shadowColor: Colors.lightBlue,

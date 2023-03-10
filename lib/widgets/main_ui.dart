@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import '../models/note.dart';
 import 'dart:developer' as devtools
-    show log; //? log est une alternative a print
+    show log;
+
+import '../utilities/greeting.dart'; //? log est une alternative a print
 
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
@@ -24,17 +26,6 @@ class _MainUiState extends State<MainUi> {
   //Liste des Notes
   final List<Note> _userNotes = [];
 
-  // ? Fonction de Greeting par rapport a l'heure
-  String _greeting() {
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return 'Good Morning';
-    } else if (hour <= 18) {
-      return 'Good Afternoon';
-    } else {
-      return 'Good Evening';
-    }
-  }
 
   void _startAddNewNode(BuildContext ctx) {
     Navigator.of(context).pushNamedAndRemoveUntil(
@@ -54,7 +45,7 @@ class _MainUiState extends State<MainUi> {
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
-            _greeting(),
+            greeting(),
           ),
         ),
         shadowColor: Colors.lightBlue,

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:registration/widgets/main_ui.dart';
 
+import '../utilities/greeting.dart';
+
 class VerificationEmail extends StatefulWidget {
   const VerificationEmail({super.key});
 
@@ -10,20 +12,7 @@ class VerificationEmail extends StatefulWidget {
 }
 
 class _VerificationEmailState extends State<VerificationEmail> {
-  String _greeting() {
-    const String goodMorning = 'Good Morning';
-    const String goodAfter = 'Good Afternoon';
-    const String goodEven = 'Good Evening';
-    final hour = TimeOfDay.now().hour;
-    if (hour <= 12) {
-      return goodMorning;
-    } else if (hour <= 18) {
-      return goodAfter;
-    } else {
-      return goodEven;
-    }
-  }
-
+ 
   @override
   void initState() {
     // TODO: implement initState
@@ -47,7 +36,7 @@ class _VerificationEmailState extends State<VerificationEmail> {
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
-            _greeting(),
+            greeting(),
           ),
         ),
         shadowColor: Colors.lightBlue,
