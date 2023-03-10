@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:registration/constants/routes.dart';
 import 'package:registration/widgets/verif_email.dart';
 import 'dart:developer' as devtools show log;
 
@@ -33,7 +34,10 @@ class _RegisterViewState extends State<RegisterView> {
           return const VerificationEmail();
         }
       }
-      Navigator.of(context).pushNamedAndRemoveUntil('/main_ui', (_) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        notesRoute,
+        (_) => false,
+      );
       devtools.log(userCredential.toString());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:registration/constants/routes.dart';
 import 'widgets/login_view.dart';
 import 'widgets/main_ui.dart';
 import 'widgets/register_view.dart';
@@ -26,11 +27,10 @@ class MyApp extends StatelessWidget {
       //? The initialRoute property defines which route the app should start with *Named Routes*
       initialRoute: '/',
       routes: {
-        '/first': (context) => FirstScreen(),
-        '/second': (context) => RegisterView(),
-        '/login': (context) => LoginView(),
-        '/main_ui': (context) => MainUi(),
-        '//note_content': (context) => MainUi(),
+        firstRoute: (context) => FirstScreen(),
+        registerRoute: (context) => RegisterView(),
+        loginRoute: (context) => LoginView(),
+        notesRoute: (context) => MainUi(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

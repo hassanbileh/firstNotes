@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools
-    show log; //? log est une alternative a print
+import 'dart:developer' as devtools show log;
+
+import 'package:registration/constants/routes.dart'; //? log est une alternative a print
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -39,7 +40,10 @@ class _LoginViewState extends State<LoginView> {
       final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       devtools.log(userCredential.toString());
-      Navigator.of(context).pushNamedAndRemoveUntil('/main_ui', (_) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        notesRoute,
+        (_) => false,
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         devtools.log('User not found');
@@ -151,7 +155,10 @@ class _LoginViewState extends State<LoginView> {
                         Text('Dont have an account ?'),
                         TextButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/second');
+                            Navigator.pushNamed(
+                              context,
+                              registerRoute,
+                            );
                           },
                           child: Text('Sign Up'),
                         )
