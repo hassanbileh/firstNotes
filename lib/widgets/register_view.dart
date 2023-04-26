@@ -7,6 +7,7 @@ import 'package:registration/widgets/verif_email.dart';
 import 'dart:developer' as devtools show log;
 
 import '../utilities/greeting.dart';
+import '../utilities/show_error_dialog.dart';
 import 'main_ui.dart';
 
 class RegisterView extends StatefulWidget {
@@ -28,27 +29,42 @@ class _RegisterViewState extends State<RegisterView> {
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        if (user.emailVerified) {
-          return const MainUi();
-        } else {
-          return const VerificationEmail();
-        }
-      }
+      await user?.sendEmailVerification();
       Navigator.of(context).pushNamedAndRemoveUntil(
-        notesRoute,
+        emailVerificationRoute,
         (_) => false,
       );
+
       devtools.log(userCredential.toString());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        devtools.log('Weak Password');
+        await showErrorDialog(
+          context,
+          'Weak password',
+        );
       } else if (e.code == 'email-already-in-use') {
-        devtools.log('Email already in use');
-      }else if (e.code == 'invalid-email') {
-        devtools.log('Invalid Email');
+        await showErrorDialog(
+          context,
+          'Email already in use',
+        );
+      } else if (e.code == 'invalid-email') {
+        await showErrorDialog(
+          context,
+          'Invalid email',
+        );
+      } else {
+        await showErrorDialog(
+          context,
+          'Error: ${e.code}',
+        );
       }
       Navigator.of(context).pop();
+    } catch (e) {
+      //! catching any other error different of FirebaseAuth
+      await showErrorDialog(
+        context,
+        e.toString(),
+      );
     }
   }
 
@@ -154,7 +170,8 @@ class _RegisterViewState extends State<RegisterView> {
                         const Text('You  have an account ?'),
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                loginRoute, (route) => false);
                           },
                           child: const Text('Sign In'),
                         )

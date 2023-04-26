@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         registerRoute: (context) => RegisterView(),
         loginRoute: (context) => LoginView(),
         notesRoute: (context) => MainUi(),
+        emailVerificationRoute: (context) => VerificationEmail(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

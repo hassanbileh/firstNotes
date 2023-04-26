@@ -160,7 +160,7 @@ class _LoginViewState extends State<LoginView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Dont have an account ?'),
+                        Text('Don\'t have an account ?'),
                         TextButton(
                           onPressed: () {
                             Navigator.pushNamed(
