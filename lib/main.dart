@@ -1,8 +1,7 @@
 // ignore_for_file: must_call_super, prefer_const_constructors, use_key_in_widget_constructors
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:registration/constants/routes.dart';
+import 'package:registration/services/auth/auth_services.dart';
 import 'widgets/login_view.dart';
 import 'widgets/main_ui.dart';
 import 'widgets/register_view.dart';
@@ -53,19 +52,17 @@ class _FirstScreenState extends State<FirstScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ),
+      future: AuthService.firebase().initialise(),
       builder: (ctx, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Text('Error');
           case ConnectionState.done:
-            final user = FirebaseAuth.instance.currentUser;
+            final user = AuthService.firebase().currentUser;
 
             // Verifier si le user est connecté
             if (user != null) {
-              if (user.emailVerified) {
+              if (user.isEmailVerified) {
                   return const MainUi();
                 } else {
                   return const VerificationEmail();

@@ -1,6 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
+import 'package:registration/enums/menu_action.dart';
+import 'package:registration/services/auth/auth_services.dart';
 import '../models/note.dart';
 import 'dart:developer' as devtools
     show log;
@@ -10,10 +12,7 @@ import '../utilities/greeting.dart'; //? log est une alternative a print
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
 
-enum MenuAction {
-  addNewNode,
-  logout,
-}
+
 
 class MainUi extends StatefulWidget {
   const MainUi();
@@ -62,7 +61,7 @@ class _MainUiState extends State<MainUi> {
                   devtools.log(shouldLogout.toString());
                   if (shouldLogout) {
                     //? en cas de deconnexion
-                    await FirebaseAuth.instance.signOut();
+                    await AuthService.firebase().logout();
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       loginRoute,
                       (_) => false,
