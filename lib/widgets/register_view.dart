@@ -29,8 +29,7 @@ class _RegisterViewState extends State<RegisterView> {
       }
       final userCredential = await AuthService.firebase()
           .createUser(email: email, password: password);
-      final user = AuthService.firebase().currentUser;
-      await AuthService.firebase().sendEmailVerification();
+      AuthService.firebase().sendEmailVerification();
       Navigator.of(context).pushNamedAndRemoveUntil(
         emailVerificationRoute,
         (_) => false,
@@ -56,6 +55,11 @@ class _RegisterViewState extends State<RegisterView> {
       await showErrorDialog(
           context,
           'Registration Error',
+        );
+    }on UserNotLoggedInAuthException {
+      await showErrorDialog(
+          context,
+          'failed to resgister',
         );
     }
     
