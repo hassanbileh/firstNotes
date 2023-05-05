@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:registration/services/auth/auth_exception.dart';
 import 'package:registration/services/auth/auth_provider.dart';
 import 'package:registration/services/auth/auth_user.dart';
@@ -142,4 +143,14 @@ class MockAuthProvider implements AuthProvider {
     final newUser = AuthUser(isEmailVerified: true);
     _user = newUser;
   }
+
+  @override
+  Future<void> signInWithGoogle() {
+    // TODO: implement signInWithGoogle
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement user
+  User? get user => throw UnimplementedError();
 }

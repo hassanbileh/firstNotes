@@ -1,12 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:registration/firebase_options.dart';
 import 'package:registration/services/auth/auth_user.dart';
 import 'package:registration/services/auth/auth_exception.dart';
 import 'package:registration/services/auth/auth_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, FirebaseAuthException;
+import 'package:google_sign_in/google_sign_in.dart';
 
-class FirebaseAuthProvider implements AuthProvider {
+class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
+
+  @override
+  Future<void> signInWithGoogle() async{
+    final googleSignIn = GoogleSignIn();
+    GoogleSignInAccount? _user;
+    final googleUser = await googleSignIn.signIn();
+    if(googleUser == null) throw UserNotFoundAuthException();
+    _user = googleUser;
+
+    final googleAuth = await googleUser.authentication;
+    googleAuth.accessToken;
+    final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken,);
+
+    final user = await FirebaseAuth.instance.signInWithCredential(credential);
+    notifyListeners();
+    
+
+  }
+
+
   @override
   Future<AuthUser> createUser({
     required String email,
@@ -102,5 +123,15 @@ class FirebaseAuthProvider implements AuthProvider {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+  }
+  
+  @override
+  User? get user {
+    final currentUser =  FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      return null;
+    } else {
+      return currentUser;
+    }
   }
 }

@@ -1,15 +1,11 @@
-// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_exception.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/widgets/verif_email.dart';
 import 'dart:developer' as devtools show log;
-
-import '../utilities/greeting.dart';
 import '../utilities/show_error_dialog.dart';
-import 'main_ui.dart';
 
 class RegisterView extends StatefulWidget {
   @override
@@ -65,6 +61,35 @@ class _RegisterViewState extends State<RegisterView> {
     
   }
 
+  void _signInWithGoogle() async {
+    try {
+      final userCredential = await AuthService.firebase().signInWithGoogle();
+      final user = AuthService.firebase().currentUser;
+      if (user!.isEmailVerified == false) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(emailVerificationRoute, (route) => false);
+      } else {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+      }
+    } on UserNotFoundAuthException {
+      await showErrorDialog(
+        context,
+        'User not found',
+      );
+    } on WrongPasswordAuthException {
+      await showErrorDialog(
+        context,
+        'Wrong password',
+      );
+    } on GenericAuthException {
+      await showErrorDialog(
+        context,
+        'Authentication error',
+      );
+    }
+  }
+
   @override
   void initState() {
     // ignore: todo
@@ -86,101 +111,198 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 50.0),
-          child: Text(
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-            greeting(),
-          ),
-        ),
-        shadowColor: Colors.lightBlue,
-      ),
-      body: SizedBox(
-        height: 330,
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          borderOnForeground: true,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Sign Up',
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-                TextField(
-                  controller: _email,
-                  enableSuggestions: false, // important for the email
-                  autocorrect: false, // important for the email
-                  keyboardType: TextInputType.emailAddress,
-                  onSubmitted: (_) => _submitData(),
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.person),
-                    hintText: 'Enter your email here',
-                    labelText: 'Email',
-                  ),
-                ),
-                TextField(
-                  controller: _password,
-                  obscureText: true, // important for the password
-                  enableSuggestions: false, // important for the password
-                  autocorrect: false, // important for the password
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.password),
-                    hintText: 'Enter your password here',
-                    labelText: 'Password',
-                  ),
-                ),
-                Column(
-                  children: [
-                    const SizedBox(
-                      height: 15,
+      backgroundColor: Colors.grey[350],
+      appBar: null,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    OutlinedButton(
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(color: Colors.blue),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.black87,
+                      size: 95,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  const Text(
+                    'Welcome, create an account below .',
+                    style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+        
+                  //? Email Field
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: TextField(
+                      controller: _email,
+                      enableSuggestions: true, //? important for the email
+                      autocorrect: false, //? important for the email
+                      keyboardType: TextInputType.emailAddress,
+                      onSubmitted: (_) => _submitData(),
+                      decoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        fillColor: Colors.grey.shade200,
+                        filled: true,
+                        icon: const Icon(Icons.person),
+                        hintText: 'Enter your email here',
                       ),
-                      onPressed: () => _submitData(),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('You  have an account ?'),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                loginRoute, (route) => false);
-                          },
-                          child: const Text('Sign In'),
-                        )
-                      ],
+                  ),
+        
+                  //? Password Field
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TextField(
+                      controller: _password,
+                      obscureText: true, // important for the password
+                      enableSuggestions: false, // important for the password
+                      autocorrect: false, // important for the password
+                      decoration: InputDecoration(
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        fillColor: Colors.grey.shade200,
+                        filled: true,
+                        icon: const Icon(
+                          Icons.password,
+                        ),
+                        hintText: 'Enter your password here',
+                        labelText: 'Password',
+                      ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 30,),
+                  Column(
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                        height: 60,
+                        width: 330,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black,
+                        ),
+                        child: OutlinedButton(
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () => _submitData(),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('Do you have an account ?'),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      loginRoute, (route) => false);
+                                },
+                                child: const Text(
+                                  'Login here',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20,),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 0.8,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                  const Text('Or create an account with'),
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 0.8,
+                                      color: Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    child: Image.asset(
+                                      'lib/assets/images/googleit.png',
+                                      height: 70,
+                                      width: 60,
+                                    ),
+                                    onTap: () => _signInWithGoogle(),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                    child: Image.asset(
+                                      'lib/assets/images/instagram.png',
+                                      height: 90,
+                                      width: 90,
+                                    ),
+                                    onTap: () => _signInWithGoogle(),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                    child: Image.asset(
+                                      'lib/assets/images/apple.png',
+                                      height: 90,
+                                      width: 90,
+                                    ),
+                                    onTap: () => _signInWithGoogle(),
+                                  ),
+                                  
+                                  
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+
   }
 }

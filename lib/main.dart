@@ -6,7 +6,6 @@ import 'widgets/login_view.dart';
 import 'widgets/main_ui.dart';
 import 'widgets/register_view.dart';
 import 'widgets/verif_email.dart';
-import 'firebase_options.dart';
 
 void main() {
   // To initialise Firebase when our app start
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
         emailVerificationRoute: (context) => VerificationEmail(),
       },
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
       ),
       debugShowCheckedModeBanner: false,
       home: FirstScreen(),

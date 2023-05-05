@@ -41,6 +41,8 @@ dependencies:
   sqflite: ^2.2.8
   path_provider: ^2.0.14
   path: ^1.8.2
+  google_sign_in: ^6.1.0
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,10 @@ flutter:
     - lib/assets/images/waiting.png
     - lib/assets/images/background.jpeg
     - lib/assets/images/welcome.jpeg
+    - lib/assets/images/apple.png
+    - lib/assets/images/instagram.png
+    - lib/assets/images/googleit.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
