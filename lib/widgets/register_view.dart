@@ -34,34 +34,33 @@ class _RegisterViewState extends State<RegisterView> {
       devtools.log(userCredential.toString());
     } on WeakPasswordAuthException {
       await showErrorDialog(
-          context,
-          'Weak password',
-        );
+        context,
+        'Weak password',
+      );
     } on EmailAlreadyInUseAuthException {
       await showErrorDialog(
-          context,
-          'Email already in use',
-        );
+        context,
+        'Email already in use',
+      );
     } on InvalidEmailAuthException {
       await showErrorDialog(
-          context,
-          'Invalid email',
-        );
+        context,
+        'Invalid email',
+      );
     } on GenericAuthException {
       await showErrorDialog(
-          context,
-          'Registration Error',
-        );
-    }on UserNotLoggedInAuthException {
+        context,
+        'Registration Error',
+      );
+    } on UserNotLoggedInAuthException {
       await showErrorDialog(
-          context,
-          'failed to resgister',
-        );
+        context,
+        'failed to resgister',
+      );
     }
-    
   }
 
-  void _signInWithGoogle() async {
+   void _signInWithGoogle() async {
     try {
       final userCredential = await AuthService.firebase().signInWithGoogle();
       final user = AuthService.firebase().currentUser;
@@ -111,7 +110,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[350],
+      backgroundColor: Colors.white,
       appBar: null,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -127,7 +126,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     child: const Icon(
                       Icons.person,
-                      color: Colors.black87,
+                      color: Colors.blue,
                       size: 95,
                     ),
                   ),
@@ -135,7 +134,7 @@ class _RegisterViewState extends State<RegisterView> {
                     height: 30,
                   ),
                   const Text(
-                    'Welcome, create an account below .',
+                    'Welcome, create an account below.',
                     style: TextStyle(
                         color: Colors.black54,
                         fontSize: 14,
@@ -144,7 +143,7 @@ class _RegisterViewState extends State<RegisterView> {
                   const SizedBox(
                     height: 20,
                   ),
-        
+
                   //? Email Field
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -158,14 +157,14 @@ class _RegisterViewState extends State<RegisterView> {
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        fillColor: Colors.grey.shade200,
+                        fillColor: Colors.grey.shade100,
                         filled: true,
-                        icon: const Icon(Icons.person),
+                        icon: const Icon(Icons.person, color: Colors.blue,),
                         hintText: 'Enter your email here',
                       ),
                     ),
                   ),
-        
+
                   //? Password Field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -178,17 +177,20 @@ class _RegisterViewState extends State<RegisterView> {
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        fillColor: Colors.grey.shade200,
+                        fillColor: Colors.grey.shade100,
                         filled: true,
                         icon: const Icon(
                           Icons.password,
+                          color: Colors.blue,
                         ),
                         hintText: 'Enter your password here',
                         labelText: 'Password',
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30,),
+                  const SizedBox(
+                    height: 30,
+                  ),
                   Column(
                     children: [
                       const SizedBox(
@@ -199,7 +201,7 @@ class _RegisterViewState extends State<RegisterView> {
                         width: 330,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.black,
+                          color: Colors.blue,
                         ),
                         child: OutlinedButton(
                           child: const Text(
@@ -230,7 +232,9 @@ class _RegisterViewState extends State<RegisterView> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Column(
                             children: [
                               Row(
@@ -262,32 +266,33 @@ class _RegisterViewState extends State<RegisterView> {
                                       height: 70,
                                       width: 60,
                                     ),
-                                    onTap: () => _signInWithGoogle(),
+                                    onTap: _signInWithGoogle,
                                   ),
                                   const SizedBox(
-                                    width: 20,
+                                    width: 18,
                                   ),
                                   GestureDetector(
                                     child: Image.asset(
                                       'lib/assets/images/instagram.png',
-                                      height: 90,
-                                      width: 90,
+                                      height: 80,
+                                      width: 80,
                                     ),
-                                    onTap: () => _signInWithGoogle(),
+                                    onTap: () {},
                                   ),
                                   const SizedBox(
-                                    width: 20,
+                                    width: 8,
                                   ),
-                                  GestureDetector(
-                                    child: Image.asset(
-                                      'lib/assets/images/apple.png',
-                                      height: 90,
-                                      width: 90,
+                                  SizedBox(
+                                    height: 90,
+                                    width: 80,
+                                    child: GestureDetector(
+                                      child: Image.asset(
+                                        'lib/assets/images/apple.png',
+                                        fit: BoxFit.cover,
+                                      ),
+                                      onTap: () {},
                                     ),
-                                    onTap: () => _signInWithGoogle(),
                                   ),
-                                  
-                                  
                                 ],
                               ),
                             ],
@@ -303,6 +308,5 @@ class _RegisterViewState extends State<RegisterView> {
         ),
       ),
     );
-
   }
 }

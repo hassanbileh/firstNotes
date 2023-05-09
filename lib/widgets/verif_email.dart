@@ -1,4 +1,6 @@
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
@@ -60,20 +62,20 @@ class _VerificationEmailState extends State<VerificationEmail> {
               const Text(
                   'If you\'ve not received any message, click the button below'),
               TextButton(
-                style: ButtonStyle(
+                style: const ButtonStyle(
                     mouseCursor: MaterialStateMouseCursor.clickable),
                 onPressed: () async {
                   await AuthService.firebase().sendEmailVerification();
                 },
-                child: Text('Send email verification'),
+                child: const Text('Send email verification'),
               ),
               TextButton(
                 onPressed: () async {
-                  await AuthService.firebase().logout();
+                  AuthService.firebase().logout();
                   Navigator.of(context)
-                      .pushNamedAndRemoveUntil(registerRoute, (route) => false);
+                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
                 },
-                child: Text('Restart'),
+                child: const Text('Restart'),
               )
             ],
           ),

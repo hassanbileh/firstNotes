@@ -38,10 +38,11 @@ class _LoginViewState extends State<LoginView> {
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
       } else {
         // user email is NOT veerified
+        await AuthService.firebase().sendEmailVerification();
         Navigator.of(context)
             .pushNamedAndRemoveUntil(emailVerificationRoute, (route) => false);
       }
-      await AuthService.firebase().sendEmailVerification();
+      
     } on UserNotFoundAuthException {
       await showErrorDialog(
         context,
@@ -62,7 +63,7 @@ class _LoginViewState extends State<LoginView> {
 
 // Fonction d'ajout grace a google
 
-  void _signInWithGoogle() async {
+ void _signInWithGoogle() async {
     try {
       final userCredential = await AuthService.firebase().signInWithGoogle();
       final user = AuthService.firebase().currentUser;
@@ -84,7 +85,7 @@ class _LoginViewState extends State<LoginView> {
         'Authentication error',
       );
     }
-  }
+  } 
 
   @override
   void initState() {
@@ -107,7 +108,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[350],
+      backgroundColor: Colors.white,
       appBar: null,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -123,7 +124,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     child: const Icon(
                       Icons.person,
-                      color: Colors.black87,
+                      color: Colors.blue,
                       size: 95,
                     ),
                   ),
@@ -154,9 +155,9 @@ class _LoginViewState extends State<LoginView> {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        fillColor: Colors.grey.shade200,
+                        fillColor: Colors.grey.shade100,
                         filled: true,
-                        icon: const Icon(Icons.person),
+                        icon: const Icon(Icons.person, color: Colors.blue,),
                         hintText: 'Enter your email here',
                       ),
                     ),
@@ -174,10 +175,11 @@ class _LoginViewState extends State<LoginView> {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
-                        fillColor: Colors.grey.shade200,
+                        fillColor: Colors.grey.shade100,
                         filled: true,
                         icon: const Icon(
                           Icons.password,
+                          color: Colors.blue,
                         ),
                         hintText: 'Enter your password here',
                         labelText: 'Password',
@@ -206,7 +208,7 @@ class _LoginViewState extends State<LoginView> {
                         width: 330,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.black,
+                          color: Colors.blue,
                         ),
                         child: OutlinedButton(
                           child: Text(
@@ -264,34 +266,62 @@ class _LoginViewState extends State<LoginView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   GestureDetector(
-                                    child: Image.asset(
-                                      'lib/assets/images/googleit.png',
-                                      height: 70,
-                                      width: 60,
+                                    onTap: _signInWithGoogle,
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      margin: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey, width: 0.2),
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.grey[100],
+                                      ),
+                                      child: Image.asset(
+                                        'lib/assets/images/googleit.png',
+                                        height: 60,
+                                        width: 60,
+                                      ),
                                     ),
-                                    onTap: () => _signInWithGoogle(),
+                                    
                                   ),
                                   SizedBox(
                                     width: 20,
                                   ),
                                   GestureDetector(
-                                    child: Image.asset(
-                                      'lib/assets/images/instagram.png',
-                                      height: 90,
-                                      width: 90,
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      margin: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey, width: 0.2),
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.grey[100],
+                                      ),
+                                      child: Image.asset(
+                                        'lib/assets/images/instagram.png',
+                                        height: 60,
+                                        width: 60,
+                                      ),
                                     ),
-                                    onTap: () => _signInWithGoogle(),
+                                    onTap: () {},
                                   ),
                                   SizedBox(
                                     width: 20,
                                   ),
                                   GestureDetector(
-                                    child: Image.asset(
-                                      'lib/assets/images/apple.png',
-                                      height: 90,
-                                      width: 90,
+                                    child: Container(
+                                      padding: EdgeInsets.all(3),
+                                      margin: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey, width: 0.2),
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: Colors.grey[100],
+                                      ),
+                                      child: Image.asset(
+                                        'lib/assets/images/apple.png',
+                                        height: 60,
+                                        width: 60,
+                                      ),
                                     ),
-                                    onTap: () => _signInWithGoogle(),
+                                    onTap: () {},
                                   ),
                                   
                                   

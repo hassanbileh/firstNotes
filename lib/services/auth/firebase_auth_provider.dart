@@ -9,14 +9,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
 
-  @override
+ @override
   Future<void> signInWithGoogle() async{
     final googleSignIn = GoogleSignIn();
     GoogleSignInAccount? _user;
     final googleUser = await googleSignIn.signIn();
     if(googleUser == null) throw UserNotFoundAuthException();
     _user = googleUser;
-
     final googleAuth = await googleUser.authentication;
     googleAuth.accessToken;
     final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken,);
@@ -100,9 +99,12 @@ class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
 
   @override
   Future<void> logout() async{
+    final googleSignIn = GoogleSignIn();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await FirebaseAuth.instance.signOut();
+      await googleSignIn.disconnect();
+      await googleSignIn.signOut();
     } else {
       throw UserNotLoggedInAuthException();
     }
@@ -125,13 +127,5 @@ class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
       );
   }
   
-  @override
-  User? get user {
-    final currentUser =  FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
-      return null;
-    } else {
-      return currentUser;
-    }
-  }
+  
 }
