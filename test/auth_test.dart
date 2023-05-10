@@ -121,7 +121,7 @@ class MockAuthProvider implements AuthProvider {
     if (!_isInitialized) throw NotInitializedException();
     if (email == 'hasbil@bile.com') throw UserNotFoundAuthException();
     if (password == 'hasbil') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(isEmailVerified: false, email: 'hasbil@bile.com');
     _user = user;
     return Future.value(user);
   }
@@ -140,17 +140,14 @@ class MockAuthProvider implements AuthProvider {
     final user = _user;
     await Future.delayed(const Duration(seconds: 1));
     if (_user == null) throw UserNotFoundAuthException();
-    final newUser = AuthUser(isEmailVerified: true);
+    final newUser = AuthUser(isEmailVerified: true, email: 'hasbil@bile.com');
     _user = newUser;
   }
 
   @override
   Future<void> signInWithGoogle() {
-    // TODO: implement signInWithGoogle
+    
     throw UnimplementedError();
   }
   
-  @override
-  // TODO: implement user
-  User? get user => throw UnimplementedError();
 }

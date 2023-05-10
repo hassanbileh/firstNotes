@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
+import 'package:registration/widgets/notes/new_notes.dart';
 import 'widgets/login_view.dart';
-import 'widgets/main_ui.dart';
+import 'widgets/notes/main_ui.dart';
 import 'widgets/register_view.dart';
 import 'widgets/verif_email.dart';
 
@@ -25,11 +26,12 @@ class MyApp extends StatelessWidget {
       //? The initialRoute property defines which route the app should start with *Named Routes*
       initialRoute: '/',
       routes: {
-        firstRoute: (context) => FirstScreen(),
-        registerRoute: (context) => RegisterView(),
-        loginRoute: (context) => LoginView(),
-        notesRoute: (context) => MainUi(),
-        emailVerificationRoute: (context) => VerificationEmail(),
+        firstRoute: (context) => const FirstScreen(),
+        registerRoute: (context) => const RegisterView(),
+        loginRoute: (context) => const LoginView(),
+        notesRoute: (context) => const MainUi(),
+        emailVerificationRoute: (context) => const VerificationEmail(),
+        newNoteRoute: (context) => const NewNoteView(),
       },
       theme: ThemeData(
         primarySwatch: Colors.grey,
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
 }
 
 class FirstScreen extends StatefulWidget {
+  const FirstScreen({super.key});
   @override
   State<FirstScreen> createState() => _FirstScreenState();
 }
@@ -59,7 +62,7 @@ class _FirstScreenState extends State<FirstScreen> {
           case ConnectionState.done:
             final user = AuthService.firebase().currentUser;
 
-            // Verifier si le user est connecté
+            //? Verifier si le user est connecté
             if (user != null) {
               if (user.isEmailVerified) {
                   return const MainUi();
@@ -72,7 +75,7 @@ class _FirstScreenState extends State<FirstScreen> {
           default:
             return const CircularProgressIndicator();
         }
-      }, // This trailing comma makes auto-formatting nicer for build methods.
+      }, //? This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

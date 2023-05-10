@@ -8,6 +8,7 @@ import 'dart:developer' as devtools show log;
 import '../utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }

@@ -7,7 +7,7 @@ import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
 import 'dart:developer' as devtools show log;
 
-import '../utilities/greeting.dart'; //? log est une alternative a print
+import '../../utilities/greeting.dart'; //? log est une alternative a print
 
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
@@ -31,7 +31,6 @@ class _MainUiState extends State<MainUi> {
   void initState() {
     _notesServices = NotesServices();
     super.initState();
-    
   }
 
   @override
@@ -57,14 +56,19 @@ class _MainUiState extends State<MainUi> {
           greeting(),
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(newNoteRoute);
+            },
+            icon: const Icon(Icons.add),
+          ),
+
           //? PopupMenuButton
           //? on crée d'abord le MenuAction enum et on l'utilise dans PopMenuButton
           PopupMenuButton<MenuAction>(
             color: Colors.black.withOpacity(0.5),
             onSelected: (value) async {
               switch (value) {
-                case MenuAction.addNewNode:
-                  return _startAddNewNode(context);
                 case MenuAction.logout:
                   final shouldLogout = await showAlertDialog(context);
                   devtools.log(shouldLogout.toString());
@@ -86,16 +90,7 @@ class _MainUiState extends State<MainUi> {
             itemBuilder: (value) {
               return [
                 //? Popup du menuItem
-                const PopupMenuItem<MenuAction>(
-                  value: MenuAction.addNewNode,
-                  child: Text(
-                    'Add Node',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                
                 const PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text(
@@ -113,12 +108,12 @@ class _MainUiState extends State<MainUi> {
       ),
       body: FutureBuilder(
         future: _notesServices.getOrCreateUser(email: userEmail),
-        builder: (context,snapshot) {
+        builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               return StreamBuilder(
                 stream: _notesServices.allNotes,
-                builder: (context,snapshot) {
+                builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                       return const Text('Waiting for notes ...');

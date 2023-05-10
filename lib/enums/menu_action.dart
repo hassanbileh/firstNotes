@@ -1,4 +1,3 @@
 enum MenuAction {
-  addNewNode,
   logout,
 }
