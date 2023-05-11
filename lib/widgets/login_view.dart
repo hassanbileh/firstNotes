@@ -21,12 +21,12 @@ class _LoginViewState extends State<LoginView> {
 // ? function de login et redirection vers le mainui
   void _submitData() async {
     try {
-      final email = _email.text;
-      final password = _password.text;
-      final userCredential = await AuthService.firebase().logIn(
-        email: email,
-        password: password,
-      );
+      // final email = _email.text;
+      // final password = _password.text;
+      // final userCredential = await AuthService.firebase().logIn(
+      //   email: email,
+      //   password: password,
+      // );
       Navigator.of(context).pushNamedAndRemoveUntil(
         notesRoute,
         (_) => false,
@@ -65,8 +65,8 @@ class _LoginViewState extends State<LoginView> {
 
  void _signInWithGoogle() async {
     try {
-      final userCredential = await AuthService.firebase().signInWithGoogle();
-      final user = AuthService.firebase().currentUser;
+      // final userCredential = await AuthService.firebase().signInWithGoogle();
+      // final user = AuthService.firebase().currentUser;
       Navigator.of(context)
             .pushNamedAndRemoveUntil(notesRoute, (route) => false);
     } on UserNotFoundAuthException {

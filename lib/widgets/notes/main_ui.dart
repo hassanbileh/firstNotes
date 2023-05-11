@@ -5,6 +5,7 @@ import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
+import 'package:registration/widgets/notes/note_view.dart';
 import 'dart:developer' as devtools show log;
 
 import '../../utilities/greeting.dart'; //? log est une alternative a print
@@ -22,11 +23,7 @@ class MainUi extends StatefulWidget {
 class _MainUiState extends State<MainUi> {
   late final NotesServices _notesServices;
   String? get userEmail => AuthService.firebase().currentUser!.email!;
-  getGet() async {
-    final myUser = await _notesServices.getOrCreateUser(email: userEmail);
-    return myUser;
-  }
-
+  final List<NoteView> _notes = [];
   @override
   void initState() {
     _notesServices = NotesServices();
@@ -37,13 +34,6 @@ class _MainUiState extends State<MainUi> {
   void dispose() {
     _notesServices.close();
     super.dispose();
-  }
-
-  void _startAddNewNode(BuildContext ctx) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/note_content',
-      (_) => false,
-    );
   }
 
   @override
@@ -90,7 +80,7 @@ class _MainUiState extends State<MainUi> {
             itemBuilder: (value) {
               return [
                 //? Popup du menuItem
-                
+
                 const PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text(
@@ -116,7 +106,33 @@ class _MainUiState extends State<MainUi> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return const Text('Waiting for notes ...');
+                    case ConnectionState.active:
+                      return Column(
+                        
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text('Recent notes', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+                          ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          Container(
+                            child: (_notes.isEmpty)
+                                ? Center(
+                                  child: SizedBox(
+                                      height: 300,
+                                      width: 200,
+                                      child: Image.asset(
+                                          'lib/assets/images/waiting.png'),
+                                    ),
+                                )
+                                : const NoteView(),
+                          ),
+                        ],
+                      );
                     case ConnectionState.done:
                       return const Text('done');
                     default:
@@ -132,7 +148,9 @@ class _MainUiState extends State<MainUi> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(newNoteRoute);
+        },
       ),
     );
   }

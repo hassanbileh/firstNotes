@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/widgets/notes/main_ui.dart';
 
 import '../utilities/greeting.dart';
 

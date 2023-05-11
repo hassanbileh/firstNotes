@@ -63,7 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
 
    void _signInWithGoogle() async {
     try {
-      final userCredential = await AuthService.firebase().signInWithGoogle();
+      // final userCredential = await AuthService.firebase().signInWithGoogle();
       final user = AuthService.firebase().currentUser;
       if (user!.isEmailVerified == false) {
         Navigator.of(context)
