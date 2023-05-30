@@ -12,28 +12,32 @@ class NewNoteView extends StatefulWidget {
 class _NewNoteViewState extends State<NewNoteView> {
   DatabaseNote? _note;
   late final NotesServices _notesServices;
-  late final TextEditingController _noteTextController;
+  late final TextEditingController _textController;
 
   @override
   @override
   void initState() {
     _notesServices = NotesServices();
-    _noteTextController = TextEditingController();
+    _textController = TextEditingController();
     super.initState();
   }
 
 // fonction qui ecoute et enregistre la note instantannement que l'utilisateur tape sur le clavier
   void _textControllerListener() async {
     final note = _note;
-    if (note == null) {
+    if (note != null) {
+      final text = _textController.text;
+      await _notesServices.updateNote(note: note, text: text);
+    } else {
       return;
     }
-    await _notesServices.updateNote(note: note, text: _noteTextController.text);
+    
+    
   }
 
   void _setUpTextControllerListener() {
-    _noteTextController.removeListener(_textControllerListener);
-    _noteTextController.addListener(_textControllerListener);
+    _textController.removeListener(_textControllerListener);
+    _textController.addListener(_textControllerListener);
   }
 
   Future<DatabaseNote> createNewNote() async {
@@ -53,30 +57,31 @@ class _NewNoteViewState extends State<NewNoteView> {
   }
 
 // Fonction qui supprime la note si elle est vide lorsque le btton retour est touché
-  void _deleteNoteIfIsEmpty() async {
+  void _deleteNoteIfTextIsEmpty() async {
     final note = _note;
-    if (_noteTextController.text.isEmpty && note != null) {
+    if (_textController.text.isEmpty && note != null) {
       await _notesServices.deleteNote(
         id: note.id,
       );
     }
   }
 
-  void _saveNoteIsNotEmpty() async {
+  void _saveNoteIfTextNotEmpty() async {
     final note = _note;
-    if (note != null && _noteTextController.text.isNotEmpty) {
+    final text = _textController.text;
+    if (note != null && text.isNotEmpty) {
       await _notesServices.updateNote(
         note: note,
-        text: _noteTextController.text,
+        text: text,
       );
     }
   }
 
   @override
   void dispose() {
-    _deleteNoteIfIsEmpty();
-    _saveNoteIsNotEmpty();
-    _noteTextController.dispose();
+    _deleteNoteIfTextIsEmpty();
+    _saveNoteIfTextNotEmpty();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -92,14 +97,14 @@ class _NewNoteViewState extends State<NewNoteView> {
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                _note = snapshot.data;
+                _note = snapshot.data as DatabaseNote?;
                 _setUpTextControllerListener();
-                return const SingleChildScrollView(
-                  child: TextField(
-                    maxLines: 200,
-                    decoration: InputDecoration(hintText: 'Add your note here',),
+                return TextField(
+                    controller: _textController,
+                    maxLines: null,
+                    decoration: const InputDecoration(hintText: 'Add your note here',),
                     keyboardType: TextInputType.multiline,
-                  ),
+                  
                 );
               default:
                 return const CircularProgressIndicator();

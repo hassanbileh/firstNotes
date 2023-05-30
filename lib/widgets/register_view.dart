@@ -262,12 +262,12 @@ class _RegisterViewState extends State<RegisterView> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   GestureDetector(
+                                    onTap: _signInWithGoogle,
                                     child: Image.asset(
                                       'lib/assets/images/googleit.png',
                                       height: 70,
                                       width: 60,
                                     ),
-                                    onTap: _signInWithGoogle,
                                   ),
                                   const SizedBox(
                                     width: 18,

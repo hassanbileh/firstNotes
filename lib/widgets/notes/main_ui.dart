@@ -5,7 +5,6 @@ import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
-import 'package:registration/widgets/notes/note_view.dart';
 import 'dart:developer' as devtools show log;
 
 import '../../utilities/greeting.dart'; //? log est une alternative a print
@@ -22,18 +21,13 @@ class MainUi extends StatefulWidget {
 
 class _MainUiState extends State<MainUi> {
   late final NotesServices _notesServices;
-  String? get userEmail => AuthService.firebase().currentUser!.email!;
-  final List<NoteView> _notes = [];
+  late final user = AuthService.firebase().currentUser!.email!;
+  String get userEmail => user;
+
   @override
   void initState() {
     _notesServices = NotesServices();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _notesServices.close();
-    super.dispose();
   }
 
   @override
@@ -107,32 +101,25 @@ class _MainUiState extends State<MainUi> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return Column(
-                        
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          
-                          const Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Text('Recent notes', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                          Container(
-                            child: (_notes.isEmpty)
-                                ? Center(
-                                  child: SizedBox(
-                                      height: 300,
-                                      width: 200,
-                                      child: Image.asset(
-                                          'lib/assets/images/waiting.png'),
-                                    ),
-                                )
-                                : const NoteView(),
-                          ),
-                        ],
-                      );
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote?>;
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note!.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const Text('snapshot has no data');
+                      }
                     case ConnectionState.done:
                       return const Text('done');
                     default:

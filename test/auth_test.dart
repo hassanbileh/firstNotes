@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:registration/services/auth/auth_exception.dart';
 import 'package:registration/services/auth/auth_provider.dart';
 import 'package:registration/services/auth/auth_user.dart';
@@ -37,7 +36,7 @@ void main() {
         await provider.initialise();
         expect(provider._isInitialized, true);
       },
-      timeout: Timeout(Duration(seconds: 2)),
+      timeout: const Timeout(Duration(seconds: 2)),
     );
 
     test('Create user should delegate to logIn', () async {
@@ -140,7 +139,7 @@ class MockAuthProvider implements AuthProvider {
     final user = _user;
     await Future.delayed(const Duration(seconds: 1));
     if (_user == null) throw UserNotFoundAuthException();
-    final newUser = AuthUser(isEmailVerified: true, email: 'hasbil@bile.com');
+    const newUser = AuthUser(isEmailVerified: true, email: 'hasbil@bile.com');
     _user = newUser;
   }
 

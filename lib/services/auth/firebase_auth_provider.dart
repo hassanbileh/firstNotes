@@ -12,15 +12,15 @@ class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
  @override
   Future<void> signInWithGoogle() async{
     final googleSignIn = GoogleSignIn();
-    GoogleSignInAccount? _user;
+    GoogleSignInAccount? user;
     final googleUser = await googleSignIn.signIn();
     if(googleUser == null) throw UserNotFoundAuthException();
-    _user = googleUser;
+    user = googleUser;
     final googleAuth = await googleUser.authentication;
     googleAuth.accessToken;
     final credential = GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken,);
 
-    final user = await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
     notifyListeners();
     
 

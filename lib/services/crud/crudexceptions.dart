@@ -10,7 +10,7 @@ class UserAlreadyExist implements Exception {}
 
 class CouldNotCreateUser implements Exception {}
 
-class UserDoNotExist implements Exception {}
+class CouldNotFindUser implements Exception {}
 
 class CouldNotDeleteNote implements Exception {}
 
