@@ -5,8 +5,10 @@ import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
+import 'package:registration/widgets/notes/notes_list.dart';
 import 'dart:developer' as devtools show log;
 
+import '../../utilities/dialogs/logout_dialog.dart';
 import '../../utilities/greeting.dart'; //? log est une alternative a print
 
 /*? on import slmnt log grace a show et specifie ce log 
@@ -54,7 +56,7 @@ class _MainUiState extends State<MainUi> {
             onSelected: (value) async {
               switch (value) {
                 case MenuAction.logout:
-                  final shouldLogout = await showAlertDialog(context);
+                  final shouldLogout = await showLogOutDialog(context);
                   devtools.log(shouldLogout.toString());
                   if (shouldLogout) {
                     //? en cas de deconnexion
@@ -102,19 +104,11 @@ class _MainUiState extends State<MainUi> {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
-                        final allNotes = snapshot.data as List<DatabaseNote?>;
-                        return ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return ListTile(
-                              title: Text(
-                                note!.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        return NotesList(
+                          notes: allNotes,
+                          onDeleteNote: (DatabaseNote note) async{
+                            await _notesServices.deleteNote(id: note.id);
                           },
                         );
                       } else {
@@ -145,40 +139,40 @@ class _MainUiState extends State<MainUi> {
 
 //! Future de AlertDialog pour la deconnexion
 
-Future<bool> showAlertDialog(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Sign Out'),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusDirectional.circular(10),
-        ),
-        content: const Text('Are you sure to logout'),
-        actions: [
-          // Cancel logout
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.blueGrey),
-            ),
-          ),
+// Future<bool> showAlertDialog(BuildContext context) {
+//   return showDialog(
+//     context: context,
+//     builder: (context) {
+//       return AlertDialog(
+//         title: const Text('Sign Out'),
+//         shape: RoundedRectangleBorder(
+//           borderRadius: BorderRadiusDirectional.circular(10),
+//         ),
+//         content: const Text('Are you sure to logout'),
+//         actions: [
+//           // Cancel logout
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop(false);
+//             },
+//             child: const Text(
+//               'Cancel',
+//               style: TextStyle(color: Colors.blueGrey),
+//             ),
+//           ),
 
-          // Confirme logout
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text(
-              'Sign Out',
-              style: TextStyle(color: Colors.blueGrey),
-            ),
-          ),
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
-}
+//           // Confirme logout
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop(true);
+//             },
+//             child: const Text(
+//               'Sign Out',
+//               style: TextStyle(color: Colors.blueGrey),
+//             ),
+//           ),
+//         ],
+//       );
+//     },
+//   ).then((value) => value ?? false);
+// }
