@@ -24,7 +24,6 @@ class NotesServices {
   late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
-  
 
   Future<DatabaseUser> getOrCreateUser({required email}) async {
     try {
@@ -39,7 +38,6 @@ class NotesServices {
       } else {
         rethrow;
       }
-      
     }
   }
 
@@ -186,20 +184,19 @@ class NotesServices {
     // if the results list is not empty throw exception
     if (results.isNotEmpty) {
       throw UserAlreadyExist();
-    }else {
+    } else {
       // Insert user in the database
-    final userId = await db.insert(
-      userTable,
-      {
-        emailColumn: email.toLowerCase(),
-      },
-    );
-    return DatabaseUser(
-      id: userId,
-      email: email,
-    );
+      final userId = await db.insert(
+        userTable,
+        {
+          emailColumn: email.toLowerCase(),
+        },
+      );
+      return DatabaseUser(
+        id: userId,
+        email: email,
+      );
     }
-    
   }
 
   Future<DatabaseUser> getUser({required email}) async {
@@ -297,10 +294,11 @@ class DatabaseNote {
   final int userId;
   final String text;
 
-  const DatabaseNote(
-      {required this.id,
-      required this.userId,
-      required this.text,});
+  const DatabaseNote({
+    required this.id,
+    required this.userId,
+    required this.text,
+  });
 
   DatabaseNote.fromRaw(Map<String, Object?> note)
       : id = note[idColumn] as int,
@@ -308,16 +306,15 @@ class DatabaseNote {
         text = note[textColumn] as String;
 
   @override
-  String toString() =>
-      'Note : ID = $id, UserID = $userId';
+  String toString() => 'Note : ID = $id, UserID = $userId';
   @override
-  bool operator == (covariant DatabaseNote other) => id == other.id;
+  bool operator ==(covariant DatabaseNote other) => id == other.id;
 
   @override
   int get hashCode => id.hashCode;
 }
 
-const dbName = 'test.db';
+const dbName = 'mynotes.db';
 const noteTable = 'note';
 const userTable = 'user';
 const idColumn = 'id';
@@ -327,7 +324,7 @@ const textColumn = 'text';
 
 //Create User table if not exist script
 const createUserTable = '''
-        CREATE TABLE IF NOT EXISTS "user" (
+        CREATE TABLE "user" (
           "id"	INTEGER NOT NULL,
           "email"	TEXT NOT NULL UNIQUE,
           PRIMARY KEY("id" AUTOINCREMENT)
@@ -336,7 +333,7 @@ const createUserTable = '''
 
 //Create Note table if not exist script
 const createNoteTable = '''
-        CREATE TABLE IF NOT EXISTS "note" (
+        CREATE TABLE "note" (
           "id"	INTEGER NOT NULL,
           "user_id"	INTEGER NOT NULL,
           "text"	TEXT,

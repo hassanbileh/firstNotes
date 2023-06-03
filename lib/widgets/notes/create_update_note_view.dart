@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
+import 'package:registration/utilities/generics/get_arguments.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({super.key});
+class CreateUpdateNoteVeiw extends StatefulWidget {
+  const CreateUpdateNoteVeiw({super.key});
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateUpdateNoteVeiw> createState() => _CreateUpdateNoteVeiwState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
   DatabaseNote? _note;
   late final NotesServices _notesServices;
   late final TextEditingController _textController;
@@ -40,7 +41,16 @@ class _NewNoteViewState extends State<NewNoteView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DatabaseNote> createNewNote() async {
+  Future<DatabaseNote> createOrUpdateExistingNote(BuildContext context) async {
+
+    final widgetNote = context.getArguments<DatabaseNote>();
+
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
+    }
+
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
@@ -50,10 +60,11 @@ class _NewNoteViewState extends State<NewNoteView> {
     final owner = await _notesServices.getUser(
       email: userEmail,
     );
-    final dbNote = await _notesServices.createNote(
+    final newNote = await _notesServices.createNote(
       owner: owner,
     );
-    return dbNote;
+    _note = newNote;
+    return newNote;
   }
 
 // Fonction qui supprime la note si elle est vide lorsque le btton retour est touché
@@ -93,11 +104,10 @@ class _NewNoteViewState extends State<NewNoteView> {
           title: const Text('New Note'),
         ),
         body: FutureBuilder(
-          future: createNewNote(),
+          future: createOrUpdateExistingNote(context),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                _note = snapshot.data as DatabaseNote?;
                 _setUpTextControllerListener();
                 return TextField(
                     controller: _textController,

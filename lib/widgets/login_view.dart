@@ -11,12 +11,13 @@ class LoginView extends StatefulWidget {
   @override
   State<LoginView> createState() => _LoginViewState();
 
-  void dispose() {}
+  
 }
 
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+
 
 // ? function de login et redirection vers le mainui
   void _submitData() async {

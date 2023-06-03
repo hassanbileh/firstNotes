@@ -3,4 +3,4 @@ const registerRoute = '/register';
 const notesRoute = '/main_ui';
 const firstRoute = '/first';
 const emailVerificationRoute = '/email-verif';
-const newNoteRoute = '/new-note';
+const createOrUpdateNoteRoute = '/new-note';

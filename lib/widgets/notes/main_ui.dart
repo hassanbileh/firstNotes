@@ -44,7 +44,7 @@ class _MainUiState extends State<MainUi> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(newNoteRoute);
+              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
             },
             icon: const Icon(Icons.add),
           ),
@@ -105,10 +105,17 @@ class _MainUiState extends State<MainUi> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as List<DatabaseNote>;
+                        print(allNotes);
                         return NotesList(
                           notes: allNotes,
-                          onDeleteNote: (DatabaseNote note) async{
+                          onDeleteNote: (DatabaseNote note) async {
                             await _notesServices.deleteNote(id: note.id);
+                          },
+                          onTap: (note) {
+                            Navigator.of(context).pushNamed(
+                              createOrUpdateNoteRoute,
+                              arguments: note,
+                            );
                           },
                         );
                       } else {
@@ -130,7 +137,7 @@ class _MainUiState extends State<MainUi> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).pushNamed(newNoteRoute);
+          Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         },
       ),
     );

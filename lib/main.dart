@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/widgets/notes/new_notes.dart';
+import 'package:registration/widgets/notes/create_update_note_view.dart';
 import 'widgets/login_view.dart';
 import 'widgets/notes/main_ui.dart';
 import 'widgets/register_view.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         notesRoute: (context) => const MainUi(),
         emailVerificationRoute: (context) => const VerificationEmail(),
-        newNoteRoute: (context) => const NewNoteView(),
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteVeiw(),
       },
       theme: ThemeData(
         primarySwatch: Colors.grey,
