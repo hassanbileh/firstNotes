@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/widgets/notes/create_update_note_view.dart';
-import 'widgets/login_view.dart';
-import 'widgets/notes/main_ui.dart';
-import 'widgets/register_view.dart';
-import 'widgets/verif_email.dart';
+import 'package:registration/widgets/notesView/create_update_note_view.dart';
+import 'widgets/authView/login_view.dart';
+import 'widgets/notesView/main_ui.dart';
+import 'widgets/authView/register_view.dart';
+import 'widgets/authView/verif_email.dart';
 
 void main() {
   // To initialise Firebase when our app start

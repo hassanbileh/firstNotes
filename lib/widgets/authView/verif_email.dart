@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_services.dart';
 
-import '../utilities/greeting.dart';
+import '../../constants/greeting.dart';
 
 class VerificationEmail extends StatefulWidget {
   const VerificationEmail({super.key});

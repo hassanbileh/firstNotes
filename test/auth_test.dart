@@ -68,7 +68,7 @@ void main() {
       expect(user.isEmailVerified, false);
     });
 
-    test('Logged user should be get verified', () async{
+    test('Logged user should be get verified', () async {
       await provider.initialise();
       expect(provider._isInitialized, true);
       await provider.sendEmailVerification();
@@ -120,7 +120,11 @@ class MockAuthProvider implements AuthProvider {
     if (!_isInitialized) throw NotInitializedException();
     if (email == 'hasbil@bile.com') throw UserNotFoundAuthException();
     if (password == 'hasbil') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false, email: 'hasbil@bile.com');
+    const user = AuthUser(
+      id: 'my_id',
+      isEmailVerified: false,
+      email: 'hasbil@bile.com',
+    );
     _user = user;
     return Future.value(user);
   }
@@ -138,15 +142,17 @@ class MockAuthProvider implements AuthProvider {
     if (!_isInitialized) throw NotInitializedException();
     final user = _user;
     await Future.delayed(const Duration(seconds: 1));
-    if (_user == null) throw UserNotFoundAuthException();
-    const newUser = AuthUser(isEmailVerified: true, email: 'hasbil@bile.com');
+    if (user == null) throw UserNotFoundAuthException();
+    const newUser = AuthUser(
+      id: 'my_id',
+      isEmailVerified: true,
+      email: 'hasbil@bile.com',
+    );
     _user = newUser;
   }
 
   @override
   Future<void> signInWithGoogle() {
-    
     throw UnimplementedError();
   }
-  
 }

@@ -56,7 +56,7 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
       return existingNote;
     }
     final user = AuthService.firebase().currentUser!;
-    final userEmail = user.email!;
+    final userEmail = user.email;
     final owner = await _notesServices.getUser(
       email: userEmail,
     );

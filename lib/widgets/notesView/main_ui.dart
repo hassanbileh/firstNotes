@@ -5,11 +5,11 @@ import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
 import 'package:registration/services/crud/notes_service.dart';
-import 'package:registration/widgets/notes/notes_list.dart';
-import 'dart:developer' as devtools show log;
+import 'package:registration/widgets/notesView/notes_list.dart';
+import 'dart:developer' as devtools show log;//? log est une alternative a print
 
 import '../../utilities/dialogs/logout_dialog.dart';
-import '../../utilities/greeting.dart'; //? log est une alternative a print
+import '../../constants/greeting.dart'; 
 
 /*? on import slmnt log grace a show et specifie ce log 
 garce a devtool pour qu'il soit pas melangé avec les autres log */
@@ -23,7 +23,7 @@ class MainUi extends StatefulWidget {
 
 class _MainUiState extends State<MainUi> {
   late final NotesServices _notesServices;
-  late final user = AuthService.firebase().currentUser!.email!;
+  late final user = AuthService.firebase().currentUser!.email;
   String get userEmail => user;
 
   @override

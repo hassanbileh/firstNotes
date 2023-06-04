@@ -14,7 +14,7 @@ class NotesServices {
 
   DatabaseUser? _user;
 
-  static final _shared = NotesServices._sharedInstance();
+  static final NotesServices _shared = NotesServices._sharedInstance();
   NotesServices._sharedInstance() {
     _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
       onListen: () {
@@ -61,7 +61,7 @@ class NotesServices {
     final allNotes = await getAllNote();
 
     //? Add the notes to _notes list
-    _notes = allNotes;
+    _notes = allNotes.toList();
     _notesStreamController.add(_notes);
   }
 
@@ -92,14 +92,13 @@ class NotesServices {
     return updatedNote;
   }
 
-  Future<List<DatabaseNote>> getAllNote() async {
+  Future<Iterable<DatabaseNote>> getAllNote() async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     final notes = await db.query(noteTable);
     final results = notes.map((n) => DatabaseNote.fromRaw(n));
-    final notesList = results.toList();
-    return notesList;
+    return results;
   }
 
   Future<DatabaseNote> getNote({required id}) async {
@@ -344,21 +343,17 @@ const userIdColumn = 'user_id';
 const textColumn = 'text';
 
 //Create User table if not exist script
-const createUserTable = '''
-        CREATE TABLE "user" (
+const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
           "id"	INTEGER NOT NULL,
           "email"	TEXT NOT NULL UNIQUE,
           PRIMARY KEY("id" AUTOINCREMENT)
-        );
-      ''';
+        );''';
 
 //Create Note table if not exist script
-const createNoteTable = '''
-        CREATE TABLE "note" (
+const createNoteTable = '''CREATE TABLE IF NOT EXISTS "note" (
           "id"	INTEGER NOT NULL,
           "user_id"	INTEGER NOT NULL,
           "text"	TEXT,
           PRIMARY KEY("id" AUTOINCREMENT),
           FOREIGN KEY("user_id") REFERENCES "user"("id")
-        );
-      ''';
+        );''';
