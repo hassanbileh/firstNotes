@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/services/crud/notes_service.dart';
+import 'package:registration/services/cloud/cloud_note.dart';
+import 'package:registration/services/cloud/firebase_cloud_storage.dart';
 import 'package:registration/widgets/notesView/notes_list.dart';
 import 'dart:developer' as devtools show log;//? log est une alternative a print
 
@@ -22,13 +23,12 @@ class MainUi extends StatefulWidget {
 }
 
 class _MainUiState extends State<MainUi> {
-  late final NotesServices _notesServices;
-  late final user = AuthService.firebase().currentUser!.email;
-  String get userEmail => user;
+  late final FirebaseCloudStorage _notesServices;
+  String get userId => AuthService.firebase().currentUser!.id;
 
   @override
   void initState() {
-    _notesServices = NotesServices();
+    _notesServices = FirebaseCloudStorage();
     super.initState();
   }
 
@@ -92,34 +92,28 @@ class _MainUiState extends State<MainUi> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: _notesServices.getOrCreateUser(email: userEmail),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return StreamBuilder(
-                stream: _notesServices.allNotes,
+      body: StreamBuilder(
+                stream: _notesServices.allNotes(ownerUserId: userId),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
                       if (snapshot.hasData) {
-                        final allNotes = snapshot.data as List<DatabaseNote>;
-                        print(allNotes);
+                        final allNotes = snapshot.data as Iterable<CloudNote>;
                         return NotesList(
                           notes: allNotes,
-                          onDeleteNote: (DatabaseNote note) async {
-                            await _notesServices.deleteNote(id: note.id);
+                          onDeleteNote: (CloudNote note) async {
+                            await _notesServices.deleteNote(documentId: note.documentId);
                           },
                           onTap: (note) {
-                            Navigator.of(context).pushNamed(
+                              Navigator.of(context).pushNamed(
                               createOrUpdateNoteRoute,
                               arguments: note,
                             );
                           },
                         );
                       } else {
-                        return const Text('snapshot has no data');
+                        return const CircularProgressIndicator();
                       }
                     case ConnectionState.done:
                       return const Text('done');
@@ -127,12 +121,7 @@ class _MainUiState extends State<MainUi> {
                       return const CircularProgressIndicator();
                   }
                 },
-              );
-            default:
-              return const CircularProgressIndicator();
-          }
-        },
-      ),
+              ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),

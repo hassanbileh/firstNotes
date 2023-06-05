@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:registration/services/crud/notes_service.dart';
+import 'package:registration/services/cloud/cloud_note.dart';
 
 import '../../utilities/dialogs/delete_dialog.dart';
 
-typedef NoteCallBack = void Function(DatabaseNote note);
+typedef NoteCallBack = void Function(CloudNote note);
 
 class NotesList extends StatelessWidget {
   const NotesList({
@@ -13,7 +13,7 @@ class NotesList extends StatelessWidget {
     required this.onTap,
   });
 
-  final List<DatabaseNote?> notes;
+  final Iterable<CloudNote?> notes;
   final NoteCallBack onDeleteNote;
   final NoteCallBack onTap;
 
@@ -22,25 +22,28 @@ class NotesList extends StatelessWidget {
     return ListView.builder(
       itemCount: notes.length,
       itemBuilder: (context, index) {
-        final note = notes[index];
-        return ListTile(
-          onTap:() {
-            onTap(note);
-          },
-          title: Text(
-            note!.text,
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              final shouldDelete = await showDeleteDialog(context);
-              if (shouldDelete) {
-                onDeleteNote(note);
-              }
+        final note = notes.elementAt(index);
+        return Card(
+          elevation: 2,
+          child: ListTile(
+            onTap:() {
+              onTap(note);
             },
+            title: Text(
+              note!.text,
+              maxLines: 1,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () async {
+                final shouldDelete = await showDeleteDialog(context);
+                if (shouldDelete) {
+                  onDeleteNote(note);
+                }
+              },
+            ),
           ),
         );
       },

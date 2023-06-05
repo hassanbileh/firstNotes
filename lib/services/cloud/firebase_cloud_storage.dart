@@ -8,7 +8,7 @@ class FirebaseCloudStorage {
 
   Future<void> deleteNote({
     required String documentId,
-  }) async{
+  }) async {
     try {
       await notes.doc(documentId).delete();
     } catch (e) {
@@ -33,33 +33,34 @@ class FirebaseCloudStorage {
           .map((doc) => CloudNote.fromSnapshot(doc))
           .where((note) => note.ownerUserId == ownerUserId));
 
-  void createNewNote({required String ownerUserId}) async {
-    await notes.add({
+  //Create new note
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final document = await notes.add({
       ownerUserIdFieldName: ownerUserId,
       textFieldName: '',
     });
+    final fetchedNote = await document.get();
+    return CloudNote(
+      documentId: fetchedNote.id,
+      ownerUserId: ownerUserId,
+      text: '',
+    );
   }
 
   //Getting notes by userId
   Future<Iterable<CloudNote>> getNotes({required String ownerUserId}) async {
     try {
-      return await notes
+      final gotNotes = await notes
           .where(
             ownerUserIdFieldName,
             isEqualTo: ownerUserId,
           )
           .get()
           .then(
-            (value) => value.docs.map(
-              (doc) {
-                return CloudNote(
-                  documentId: doc.id,
-                  ownerUserId: doc.data()[ownerUserIdFieldName] as String,
-                  text: doc.data()[textFieldName] as String,
-                );
-              },
-            ),
+            // onError: (_) => CloudNotGetAllNotesException(),
+            (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)),
           );
+      return gotNotes;
     } catch (e) {
       throw CloudNotGetAllNotesException();
     }

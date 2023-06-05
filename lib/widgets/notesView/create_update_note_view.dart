@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:registration/services/auth/auth_services.dart';
-import 'package:registration/services/crud/notes_service.dart';
 import 'package:registration/utilities/generics/get_arguments.dart';
+import 'package:registration/services/cloud/cloud_note.dart';
+import 'package:registration/services/cloud/firebase_cloud_storage.dart';
 
 class CreateUpdateNoteVeiw extends StatefulWidget {
   const CreateUpdateNoteVeiw({super.key});
@@ -11,14 +12,13 @@ class CreateUpdateNoteVeiw extends StatefulWidget {
 }
 
 class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
-  DatabaseNote? _note;
-  late final NotesServices _notesServices;
+  CloudNote? _note;
+  late final FirebaseCloudStorage _notesServices;
   late final TextEditingController _textController;
 
   @override
-  @override
   void initState() {
-    _notesServices = NotesServices();
+    _notesServices = FirebaseCloudStorage();
     _textController = TextEditingController();
     super.initState();
   }
@@ -28,12 +28,13 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
     final note = _note;
     if (note != null) {
       final text = _textController.text;
-      await _notesServices.updateNote(note: note, text: text);
+      await _notesServices.updateNote(
+        text: text,
+        documentId: note.documentId,
+      );
     } else {
       return;
     }
-    
-    
   }
 
   void _setUpTextControllerListener() {
@@ -41,39 +42,34 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DatabaseNote> createOrUpdateExistingNote(BuildContext context) async {
-
-    final widgetNote = context.getArguments<DatabaseNote>();
+  Future<CloudNote> createOrUpdateExistingNote(BuildContext context) async {
+    //Getting arguments passed in navigator route
+    final widgetNote = context.getArguments<CloudNote>();
 
     if (widgetNote != null) {
       _note = widgetNote;
       _textController.text = widgetNote.text;
+      
       return widgetNote;
     }
 
     final existingNote = _note;
     if (existingNote != null) {
       return existingNote;
+    } else {
+      final user = AuthService.firebase().currentUser!;
+      final userId = user.id;
+      final newNote = await _notesServices.createNewNote(ownerUserId: userId);
+      _note = newNote;
+      return newNote;
     }
-    final user = AuthService.firebase().currentUser!;
-    final userEmail = user.email;
-    final owner = await _notesServices.getUser(
-      email: userEmail,
-    );
-    final newNote = await _notesServices.createNote(
-      owner: owner,
-    );
-    _note = newNote;
-    return newNote;
   }
 
 // Fonction qui supprime la note si elle est vide lorsque le btton retour est touché
   void _deleteNoteIfTextIsEmpty() async {
     final note = _note;
     if (_textController.text.isEmpty && note != null) {
-      await _notesServices.deleteNote(
-        id: note.id,
-      );
+      await _notesServices.deleteNote(documentId: note.documentId);
     }
   }
 
@@ -82,7 +78,7 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
     final text = _textController.text;
     if (note != null && text.isNotEmpty) {
       await _notesServices.updateNote(
-        note: note,
+        documentId: note.documentId,
         text: text,
       );
     }
@@ -110,11 +106,12 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
               case ConnectionState.done:
                 _setUpTextControllerListener();
                 return TextField(
-                    controller: _textController,
-                    maxLines: null,
-                    decoration: const InputDecoration(hintText: 'Add your note here',),
-                    keyboardType: TextInputType.multiline,
-                  
+                  controller: _textController,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Add your note here',
+                  ),
+                  keyboardType: TextInputType.multiline,
                 );
               default:
                 return const CircularProgressIndicator();
