@@ -25,24 +25,34 @@ class NotesList extends StatelessWidget {
         final note = notes.elementAt(index);
         return Card(
           elevation: 2,
-          child: ListTile(
-            onTap:() {
-              onTap(note);
+          child: Dismissible(
+            key: ValueKey(notes.elementAt(index)),
+            onDismissed: (direction) async {
+              final shouldDelete = await showDeleteDialog(context);
+                  if (shouldDelete) {
+                    onDeleteNote(note);
+                  }
             },
-            title: Text(
-              note!.text,
-              maxLines: 1,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () async {
-                final shouldDelete = await showDeleteDialog(context);
-                if (shouldDelete) {
-                  onDeleteNote(note);
-                }
+            background: Container(color: Theme.of(context).colorScheme.error,),
+            child: ListTile(
+              onTap:() {
+                onTap(note);
               },
+              title: Text(
+                note!.text,
+                maxLines: 1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () async {
+                  final shouldDelete = await showDeleteDialog(context);
+                  if (shouldDelete) {
+                    onDeleteNote(note);
+                  }
+                },
+              ),
             ),
           ),
         );

@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration/constants/routes.dart';
 import 'package:registration/enums/menu_action.dart';
 import 'package:registration/services/auth/auth_services.dart';
+import 'package:registration/services/auth/bloc/auth_bloc.dart';
+import 'package:registration/services/auth/bloc/auth_event.dart';
 import 'package:registration/services/cloud/cloud_note.dart';
 import 'package:registration/services/cloud/firebase_cloud_storage.dart';
 import 'package:registration/widgets/notesView/notes_list.dart';
@@ -59,12 +62,7 @@ class _MainUiState extends State<MainUi> {
                   final shouldLogout = await showLogOutDialog(context);
                   devtools.log(shouldLogout.toString());
                   if (shouldLogout) {
-                    //? en cas de deconnexion
-                    AuthService.firebase().logout();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (_) => false,
-                    );
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
                   }
 
                   break;

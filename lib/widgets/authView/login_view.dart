@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:registration/constants/routes.dart';
 import 'package:registration/services/auth/auth_exception.dart';
 import 'package:registration/services/auth/auth_services.dart';
+import 'package:registration/services/auth/bloc/auth_bloc.dart';
+import 'package:registration/services/auth/bloc/auth_event.dart';
 import '../../utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -10,40 +13,22 @@ class LoginView extends StatefulWidget {
 
   @override
   State<LoginView> createState() => _LoginViewState();
-
-  
 }
 
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
-
 // ? function de login et redirection vers le mainui
   void _submitData() async {
     try {
       final email = _email.text;
       final password = _password.text;
-      await AuthService.firebase().logIn(
-        email: email,
-        password: password,
-      );
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        notesRoute,
-        (_) => false,
-      );
-      final user = AuthService.firebase().currentUser;
-      if (user?.isEmailVerified ?? false) {
-        // user's email verified
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-      } else {
-        // user email is NOT veerified
-        await AuthService.firebase().sendEmailVerification();
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(emailVerificationRoute, (route) => false);
-      }
-      
+
+      context.read<AuthBloc>().add(AuthEventLogIn(
+            email,
+            password,
+          ));
     } on UserNotFoundAuthException {
       await showErrorDialog(
         context,
@@ -64,12 +49,12 @@ class _LoginViewState extends State<LoginView> {
 
 // Fonction d'ajout grace a google
 
- void _signInWithGoogle() async {
+  void _signInWithGoogle() async {
     try {
       await AuthService.firebase().signInWithGoogle();
       AuthService.firebase().currentUser;
       Navigator.of(context)
-            .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+          .pushNamedAndRemoveUntil(notesRoute, (route) => false);
     } on UserNotFoundAuthException {
       await showErrorDialog(
         context,
@@ -86,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
         'Authentication error',
       );
     }
-  } 
+  }
 
   @override
   void initState() {
@@ -142,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
                   SizedBox(
                     height: 20,
                   ),
-        
+
                   //? Email Field
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -158,12 +143,15 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         fillColor: Colors.grey.shade100,
                         filled: true,
-                        icon: const Icon(Icons.person, color: Colors.blue,),
+                        icon: const Icon(
+                          Icons.person,
+                          color: Colors.blue,
+                        ),
                         hintText: 'Enter your email here',
                       ),
                     ),
                   ),
-        
+
                   //? Password Field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -213,7 +201,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         child: OutlinedButton(
                           child: Text(
-                            'Login',
+                            'Sign In',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -240,7 +228,9 @@ class _LoginViewState extends State<LoginView> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Column(
                             children: [
                               Row(
@@ -251,7 +241,7 @@ class _LoginViewState extends State<LoginView> {
                                       color: Colors.grey[400],
                                     ),
                                   ),
-                                  Text('Or continue with'),
+                                  Text('Or'),
                                   Expanded(
                                     child: Divider(
                                       thickness: 0.8,
@@ -263,70 +253,40 @@ class _LoginViewState extends State<LoginView> {
                               SizedBox(
                                 height: 30,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: _signInWithGoogle,
-                                    child: Container(
-                                      padding: EdgeInsets.all(3),
-                                      margin: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey, width: 0.2),
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.grey[100],
+                              Container(
+                                height: 60,
+                                width: 330,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.blue[40],
+                                ),
+                                child: OutlinedButton(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Image.asset(
+                                          'lib/assets/images/googleit.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      child: Image.asset(
-                                        'lib/assets/images/googleit.png',
-                                        height: 60,
-                                        width: 60,
+                                      SizedBox(
+                                        width: 30,
                                       ),
-                                    ),
-                                    
+                                      Text(
+                                        'Sign In with Google',
+                                        style: TextStyle(
+                                            color: Colors.blue[500],
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  GestureDetector(
-                                    child: Container(
-                                      padding: EdgeInsets.all(3),
-                                      margin: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey, width: 0.2),
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.grey[100],
-                                      ),
-                                      child: Image.asset(
-                                        'lib/assets/images/instagram.png',
-                                        height: 60,
-                                        width: 60,
-                                      ),
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  GestureDetector(
-                                    child: Container(
-                                      padding: EdgeInsets.all(3),
-                                      margin: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey, width: 0.2),
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: Colors.grey[100],
-                                      ),
-                                      child: Image.asset(
-                                        'lib/assets/images/apple.png',
-                                        height: 60,
-                                        width: 60,
-                                      ),
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                  
-                                  
-                                ],
+                                  onPressed: () => _signInWithGoogle(),
+                                ),
                               ),
                             ],
                           ),

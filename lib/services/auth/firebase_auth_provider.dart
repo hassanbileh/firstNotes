@@ -33,10 +33,13 @@ class FirebaseAuthProvider extends ChangeNotifier implements AuthProvider{
     required String password,
   }) async {
     try {
+      // create user with FirebaseAtuh
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      
       
       final user = currentUser;
       if (user != null) {

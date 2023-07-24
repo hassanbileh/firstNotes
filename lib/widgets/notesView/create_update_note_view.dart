@@ -4,14 +4,14 @@ import 'package:registration/utilities/generics/get_arguments.dart';
 import 'package:registration/services/cloud/cloud_note.dart';
 import 'package:registration/services/cloud/firebase_cloud_storage.dart';
 
-class CreateUpdateNoteVeiw extends StatefulWidget {
-  const CreateUpdateNoteVeiw({super.key});
+class CreateUpdateNoteView extends StatefulWidget {
+  const CreateUpdateNoteView({super.key});
 
   @override
-  State<CreateUpdateNoteVeiw> createState() => _CreateUpdateNoteVeiwState();
+  State<CreateUpdateNoteView> createState() => _CreateUpdateNoteViewState();
 }
 
-class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
+class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   CloudNote? _note;
   late final FirebaseCloudStorage _notesServices;
   late final TextEditingController _textController;
@@ -42,6 +42,7 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
     _textController.addListener(_textControllerListener);
   }
 
+// ? Créer ou Modifier Note
   Future<CloudNote> createOrUpdateExistingNote(BuildContext context) async {
     //Getting arguments passed in navigator route
     final widgetNote = context.getArguments<CloudNote>();
@@ -73,6 +74,7 @@ class _CreateUpdateNoteVeiwState extends State<CreateUpdateNoteVeiw> {
     }
   }
 
+// Fonction qui enregistre la note si elle n'est pas vide lorsque le btton retour est touché
   void _saveNoteIfTextNotEmpty() async {
     final note = _note;
     final text = _textController.text;

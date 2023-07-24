@@ -1,7 +1,11 @@
 // ignore_for_file: must_call_super, prefer_const_constructors, use_key_in_widget_constructors
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:registration/constants/routes.dart';
-import 'package:registration/services/auth/auth_services.dart';
+import 'package:registration/services/auth/bloc/auth_bloc.dart';
+import 'package:registration/services/auth/bloc/auth_event.dart';
+import 'package:registration/services/auth/bloc/auth_state.dart';
+import 'package:registration/services/auth/firebase_auth_provider.dart';
 import 'package:registration/widgets/notesView/create_update_note_view.dart';
 import 'widgets/authView/login_view.dart';
 import 'widgets/notesView/main_ui.dart';
@@ -31,13 +35,16 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         notesRoute: (context) => const MainUi(),
         emailVerificationRoute: (context) => const VerificationEmail(),
-        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteVeiw(),
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
       debugShowCheckedModeBanner: false,
-      home: FirstScreen(),
+      home: BlocProvider(
+        create: (context) => AuthBloc(FirebaseAuthProvider()),
+        child: const FirstScreen(),
+      ),
     );
   }
 }
@@ -53,29 +60,50 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: AuthService.firebase().initialise(),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Text('Error');
-          case ConnectionState.done:
-            final user = AuthService.firebase().currentUser;
+    context.read<AuthBloc>().add(AuthEventInitialize());
 
-            //? Verifier si le user est connecté
-            if (user != null) {
-              if (user.isEmailVerified) {
-                  return const MainUi();
-                } else {
-                  return const VerificationEmail();
-                }
-            } else {
-              return const LoginView();
-            }
-          default:
-            return const CircularProgressIndicator();
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthStateLoggedIn) {
+          return const MainUi();
+        } else if (state is AuthStateNeedsVerification) {
+          return const VerificationEmail();
+        } else if (state is AuthStateLogOut) {
+          return LoginView();
+        } else {
+          return Scaffold(
+              body: SafeArea(child: const CircularProgressIndicator()));
         }
       },
     );
   }
 }
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+@immutable
+abstract class CounterState {
+  final int value;
+  const CounterState(this.value);
+}
+
+class CounterStateValidNumber extends CounterState {
+  const CounterStateValidNumber(int value) : super(value);
+}
+
+// class CounterStateInValidNumber extends CounterState{
+//   final String invalidValue;
+//   final int previousValue;
+// }

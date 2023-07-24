@@ -61,9 +61,9 @@ class _RegisterViewState extends State<RegisterView> {
     }
   }
 
-   void _signInWithGoogle() async {
+  void _signInWithGoogle() async {
     try {
-      // final userCredential = await AuthService.firebase().signInWithGoogle();
+      final userCredential = await AuthService.firebase().signInWithGoogle();
       final user = AuthService.firebase().currentUser;
       if (user!.isEmailVerified == false) {
         Navigator.of(context)
@@ -160,7 +160,10 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                         fillColor: Colors.grey.shade100,
                         filled: true,
-                        icon: const Icon(Icons.person, color: Colors.blue,),
+                        icon: const Icon(
+                          Icons.person,
+                          color: Colors.blue,
+                        ),
                         hintText: 'Enter your email here',
                       ),
                     ),
@@ -258,43 +261,40 @@ class _RegisterViewState extends State<RegisterView> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: _signInWithGoogle,
-                                    child: Image.asset(
-                                      'lib/assets/images/googleit.png',
-                                      height: 70,
-                                      width: 60,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 18,
-                                  ),
-                                  GestureDetector(
-                                    child: Image.asset(
-                                      'lib/assets/images/instagram.png',
-                                      height: 80,
-                                      width: 80,
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  SizedBox(
-                                    height: 90,
-                                    width: 80,
-                                    child: GestureDetector(
-                                      child: Image.asset(
-                                        'lib/assets/images/apple.png',
-                                        fit: BoxFit.cover,
+                              Container(
+                                height: 60,
+                                width: 330,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.blue[40],
+                                ),
+                                child: OutlinedButton(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Image.asset(
+                                          'lib/assets/images/googleit.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      onTap: () {},
-                                    ),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
+                                      Text(
+                                        'Sign Up with Google',
+                                        style: TextStyle(
+                                            color: Colors.blue[500],
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                  onPressed: () => _signInWithGoogle(),
+                                ),
                               ),
                             ],
                           ),
