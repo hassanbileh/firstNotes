@@ -2,8 +2,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:registration/constants/routes.dart';
-import 'package:registration/services/auth/auth_services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:registration/services/auth/bloc/auth_bloc.dart';
+import 'package:registration/services/auth/bloc/auth_event.dart';
 
 import '../../constants/greeting.dart';
 
@@ -63,16 +64,14 @@ class _VerificationEmailState extends State<VerificationEmail> {
               TextButton(
                 style: const ButtonStyle(
                     mouseCursor: MaterialStateMouseCursor.clickable),
-                onPressed: () async {
-                  await AuthService.firebase().sendEmailVerification();
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
                 },
                 child: const Text('Send email verification'),
               ),
               TextButton(
-                onPressed: () async {
-                  AuthService.firebase().logout();
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
                 },
                 child: const Text('Restart'),
               )

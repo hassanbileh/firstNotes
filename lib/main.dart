@@ -30,11 +30,6 @@ class MyApp extends StatelessWidget {
       //? The initialRoute property defines which route the app should start with *Named Routes*
       initialRoute: '/',
       routes: {
-        firstRoute: (context) => const FirstScreen(),
-        registerRoute: (context) => const RegisterView(),
-        loginRoute: (context) => const LoginView(),
-        notesRoute: (context) => const MainUi(),
-        emailVerificationRoute: (context) => const VerificationEmail(),
         createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
       theme: ThemeData(
@@ -60,8 +55,7 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AuthBloc>().add(AuthEventInitialize());
-
+    context.read<AuthBloc>().add(const AuthEventInitialize());
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
@@ -69,41 +63,18 @@ class _FirstScreenState extends State<FirstScreen> {
         } else if (state is AuthStateNeedsVerification) {
           return const VerificationEmail();
         } else if (state is AuthStateLogOut) {
-          return LoginView();
+          return const LoginView();
+        }else if (state is AuthStateRegistering) {
+          return const RegisterView();
         } else {
-          return Scaffold(
-              body: SafeArea(child: const CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
       },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-@immutable
-abstract class CounterState {
-  final int value;
-  const CounterState(this.value);
-}
-
-class CounterStateValidNumber extends CounterState {
-  const CounterStateValidNumber(int value) : super(value);
-}
-
-// class CounterStateInValidNumber extends CounterState{
-//   final String invalidValue;
-//   final int previousValue;
-// }
